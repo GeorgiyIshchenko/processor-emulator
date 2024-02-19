@@ -9,8 +9,8 @@ template<class T>
 class Stack {
 
 private:
-    int32_t size;
-    int32_t top;
+    size_t size;
+    size_t top;
     T *array;
 
 public:
@@ -29,8 +29,7 @@ public:
         size = other.size;
         top = other.top;
         array = new T;
-        for (int32_t i = 0; i < size; i++)
-            array[i] = other.array[i];
+        std::copy(other.array, other.array + other.size - 1, array);
     }
 
     Stack(Stack &&other) noexcept {
@@ -44,31 +43,44 @@ public:
         return *this;
     }
 
-    bool is_empty() { return top < 0; }
+    Stack &operator=(Stack &&other) noexcept
+    {
+        this->swap(other);
+        return *this;
+    }
 
-    int32_t get_size() { return size; }
+    void swap(Stack &&other)
+    {
+        std::swap(size, other.size);
+        std::swap(top, other.top);
+        std::swap(array, other);
+    }
 
-    void pushBack(T &&object) {
-        if (top == size) {
+    [[nodiscard]] bool isEmpty() const { return top < 0; }
+
+    [[nodiscard]] int32_t getSize() const { return top; }
+
+    void pushBack(T&& object) {
+        if (top + 1 == size) {
             T *resizedArray = new T[size * 2];
-            for (int32_t i = 0; i < size; i++) {
+            for (size_t i = 0; i < size; i++) {
                 resizedArray[i] = array[i];
             }
             delete array;
             array = resizedArray;
             size *= 2;
         }
-        array[++top] = object;
+        array[++top] = std::forward<T>(object);
     }
 
-    T get_top() {
-        if (this->is_empty())
+    T getTop() {
+        if (this->isEmpty())
             throw std::exception();
         return array[top];
     }
 
     T pop() {
-        if (this->is_empty())
+        if (this->isEmpty())
             throw std::exception();
         return array[top--];
     }
