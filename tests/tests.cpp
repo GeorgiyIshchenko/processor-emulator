@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include <Stack.h>
 
+using namespace processorEmulator;
+
 TEST(Operation, Base) {
     Stack<int> stack{};
     stack.push(1);
