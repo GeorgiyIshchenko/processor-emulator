@@ -50,6 +50,19 @@ namespace processorEmulator {
             array = nullptr;
         }
 
+
+    public:
+
+        [[nodiscard]] bool isEmpty() const { return size == 0; }
+
+        [[nodiscard]] int32_t getSize() const { return size; }
+
+        T getTop() {
+            if (this->isEmpty())
+                throw std::exception();
+            return array[size - 1];
+        }
+
     private:
 
         friend void swap(Stack &s1, Stack &s2) noexcept {
@@ -58,35 +71,27 @@ namespace processorEmulator {
             std::swap(s1.array, s2.array);
         }
 
+        void increaseCapacity() {
+            T *resizedArray = new T[capacity * 2];
+            for (sizeType i = 0; i < capacity; i++) {
+                resizedArray[i] = array[i];
+            }
+            delete[] array;
+            array = resizedArray;
+            capacity *= 2;
+        }
+
     public:
 
-        [[nodiscard]] bool isEmpty() const { return size == 0; }
-
-        [[nodiscard]] int32_t getSize() const { return size; }
-
-        void push(const T &object) {
-            if (size + 1 == capacity) {
-                T *resizedArray = new T[capacity * 2];
-                for (sizeType i = 0; i < capacity; i++) {
-                    resizedArray[i] = array[i];
-                }
-                delete[] array;
-                array = resizedArray;
-                capacity *= 2;
-            }
-            size++;
-            array[size - 1] = object;
-        }
-
         void push(T &&object) {
-            T temp = std::move(object);
-            this->push(temp);
+            if (size + 1 == capacity)
+                increaseCapacity();
+            array[size++] = object;
         }
 
-        T getTop() {
-            if (this->isEmpty())
-                throw std::exception();
-            return array[size - 1];
+        void push(T &object) {
+            T copy{object};
+            push(std::move(object));
         }
 
         T pop() {
