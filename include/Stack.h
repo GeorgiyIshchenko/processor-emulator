@@ -70,7 +70,7 @@ namespace processorEmulator {
                 for (sizeType i = 0; i < capacity; i++) {
                     resizedArray[i] = array[i];
                 }
-                std::free(array);
+                delete[] array;
                 array = resizedArray;
                 capacity *= 2;
             }
