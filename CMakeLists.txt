@@ -19,6 +19,7 @@ include_directories(include)
 set(INCLUDE
         include/Stack.h
         include/ProcessorEmulator.h
+        include/CommandParser.h
 )
 
 add_library(${PROJECT_NAME} INTERFACE ${INCLUDE})
