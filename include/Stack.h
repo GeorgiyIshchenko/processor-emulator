@@ -38,16 +38,19 @@ namespace processorEmulator {
             swap(*this, other);
         }
 
-        Stack &operator=(Stack other) noexcept {
+        Stack &operator=(const Stack &other) noexcept {
+            *this = Stack(other);
+            return *this;
+        }
+
+        Stack &operator=(Stack &&other) noexcept {
             swap(*this, other);
             return *this;
         }
 
+
         ~Stack() {
-            capacity = 0;
-            size = 0;
             delete[] array;
-            array = nullptr;
         }
 
 
@@ -61,6 +64,26 @@ namespace processorEmulator {
             if (this->isEmpty())
                 throw std::exception();
             return array[size - 1];
+        }
+
+    public:
+
+        void push(T &&object) {
+            if (size + 1 == capacity)
+                increaseCapacity();
+            array[size++] = object;
+        }
+
+        void push(const T &object) {
+            T copy{object};
+            push(std::move(copy));
+        }
+
+        T pop() {
+            if (this->isEmpty())
+                throw std::exception();
+            size--;
+            return array[size];
         }
 
     private:
@@ -79,26 +102,6 @@ namespace processorEmulator {
             delete[] array;
             array = resizedArray;
             capacity *= 2;
-        }
-
-    public:
-
-        void push(T &&object) {
-            if (size + 1 == capacity)
-                increaseCapacity();
-            array[size++] = object;
-        }
-
-        void push(T &object) {
-            T copy{object};
-            push(std::move(object));
-        }
-
-        T pop() {
-            if (this->isEmpty())
-                throw std::exception();
-            size--;
-            return array[size];
         }
 
 
