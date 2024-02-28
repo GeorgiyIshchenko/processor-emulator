@@ -24,7 +24,7 @@ set(INCLUDE
 
 add_library(${PROJECT_NAME} INTERFACE ${INCLUDE})
 
-add_executable(${PROJECT_NAME}_tests tests/tests.cpp)
+add_executable(${PROJECT_NAME}_tests tests/stack_tests.cpp)
 target_link_libraries(${PROJECT_NAME}_tests PRIVATE ${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME}_tests PRIVATE gtest_main)
 

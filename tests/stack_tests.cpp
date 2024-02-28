@@ -44,3 +44,13 @@ TEST(Operation, RuleOfFive) {
     EXPECT_EQ(rvalueCopy.pop(), 2);
     EXPECT_EQ(rvalue.pop(), 2);
 }
+
+TEST(Operation, PopEmpty){
+    Stack<std::vector<int>> stack{};
+    try{
+        stack.pop();
+    }
+    catch(const StackException &e){
+        EXPECT_EQ(e.what(), "pop() from empty stack");
+    }
+}

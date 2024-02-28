@@ -4,8 +4,24 @@
 #include <iostream>
 #include <cstdint>
 #include <utility>
+#include <exception>
 
 namespace processorEmulator {
+    struct StackException : public std::exception {
+
+        explicit StackException(const char *message) : message(message) {};
+
+        [[nodiscard]] const char *what() const noexcept override {
+            return message;
+        }
+
+    private:
+
+        const char *message;
+
+    };
+
+
     template<class T>
     class Stack {
 
@@ -62,7 +78,7 @@ namespace processorEmulator {
 
         T getTop() {
             if (this->isEmpty())
-                throw std::exception();
+                throw StackException("getTop() from empty stack");
             return array[size - 1];
         }
 
@@ -81,7 +97,7 @@ namespace processorEmulator {
 
         T pop() {
             if (this->isEmpty())
-                throw std::exception();
+                throw StackException("pop() from empty stack");
             size--;
             return array[size];
         }
@@ -103,7 +119,6 @@ namespace processorEmulator {
             array = resizedArray;
             capacity *= 2;
         }
-
 
     };
 
