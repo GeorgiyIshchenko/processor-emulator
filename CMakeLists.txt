@@ -20,6 +20,9 @@ set(INCLUDE
         include/Stack.h
         include/ProcessorEmulator.h
         include/CommandParser.h
+        include/Commands.h
+        src/Commands.cpp
+        src/CommandParser.cpp
 )
 
 add_library(${PROJECT_NAME} INTERFACE ${INCLUDE})
