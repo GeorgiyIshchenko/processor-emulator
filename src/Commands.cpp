@@ -1,54 +1,53 @@
-
-#include "Commands.h"
+#include <Commands.h>
 
 namespace processorEmulator {
 
 
-    Commands::argType Commands::Begin::execute() {
-        return BaseCommand::execute();
+    void Commands::Begin::execute() {
+        BaseCommand::execute();
     }
 
-    Commands::argType Commands::End::execute() {
-        return BaseCommand::execute();
+    void Commands::End::execute() {
+        BaseCommand::execute();
     }
 
-    Commands::argType Commands::Push::execute() {
-        return BaseCommand::execute();
+    void Commands::Push::execute() {
+        BaseCommand::execute();
     }
 
-    Commands::argType Commands::Pop::execute() {
-        return BaseCommand::execute();
+    void Commands::Pop::execute() {
+        BaseCommand::execute();
     }
 
-    Commands::argType Commands::PushR::execute() {
-        return BaseCommand::execute();
+    void Commands::PushR::execute() {
+        BaseCommand::execute();
     }
 
-    Commands::argType Commands::PopR::execute() {
-        return BaseCommand::execute();
+    void Commands::PopR::execute() {
+        BaseCommand::execute();
     }
 
-    Commands::argType Commands::Add::execute() {
-        return BaseCommand::execute();
+    void Commands::Add::execute() {
+        BaseCommand::execute();
     }
 
-    Commands::argType Commands::Sub::execute() {
-        return BaseCommand::execute();
+    void Commands::Sub::execute() {
+        BaseCommand::execute();
     }
 
-    Commands::argType Commands::Mul::execute() {
-        return BaseCommand::execute();
+    void Commands::Mul::execute() {
+        BaseCommand::execute();
     }
 
-    Commands::argType Commands::Div::execute() {
-        return BaseCommand::execute();
+    void Commands::Div::execute() {
+        BaseCommand::execute();
     }
 
-    Commands::argType Commands::In::execute() {
-        return BaseCommand::execute();
+    void Commands::In::execute() {
+        BaseCommand::execute();
     }
 
-    Commands::argType Commands::Out::execute() {
-        return BaseCommand::execute();
+    void Commands::Out::execute() {
+        BaseCommand::execute();
     }
 }

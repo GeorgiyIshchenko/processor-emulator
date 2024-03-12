@@ -1,0 +1,6 @@
+BEGIN
+PUSH 2
+
+    PUSH 3
+    ADD
+END

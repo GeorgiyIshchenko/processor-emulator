@@ -14,22 +14,28 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-include_directories(include)
+include_directories(src)
 
-set(INCLUDE
-        include/Stack.h
-        include/ProcessorEmulator.h
-        include/CommandParser.h
-        include/Commands.h
-        src/Commands.cpp
+set(SRC
+        src/Stack.h
+        src/ProcessorEmulator.h
+        src/CommandParser.h
+        src/Commands.h
         src/CommandParser.cpp
+        src/Commands.cpp
 )
 
-add_library(${PROJECT_NAME} INTERFACE ${INCLUDE})
+add_library(${PROJECT_NAME} ${SRC})
+target_include_directories(${PROJECT_NAME} PRIVATE src)
 
-add_executable(${PROJECT_NAME}_tests tests/stack_tests.cpp)
-target_link_libraries(${PROJECT_NAME}_tests PRIVATE ${PROJECT_NAME})
-target_link_libraries(${PROJECT_NAME}_tests PRIVATE gtest_main)
+add_executable(${PROJECT_NAME}_stack_tests tests/stack_tests.cpp)
+target_link_libraries(${PROJECT_NAME}_stack_tests PRIVATE ${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME}_stack_tests PRIVATE gtest_main)
+
+add_executable(${PROJECT_NAME}_parser_tests tests/parserTests.cpp)
+target_link_libraries(${PROJECT_NAME}_parser_tests PRIVATE ${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME}_parser_tests PRIVATE gtest_main)
 
 include(GoogleTest)
-gtest_discover_tests(${PROJECT_NAME}_tests)
+gtest_discover_tests(${PROJECT_NAME}_stack_tests)
+gtest_discover_tests(${PROJECT_NAME}_parser_tests)
