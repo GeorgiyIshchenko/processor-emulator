@@ -13,7 +13,7 @@ namespace processorEmulator::CommandParser {
         _programPath = programPath;
         _objectRegex = objectRegex;
         _commandRegex = {
-                {nullptr,               "(\\n)"},
+                {nullptr,               "(^\\s*$)"},
                 {new Commands::Begin{}, "(BEGIN\\b)"},
                 {new Commands::End{},   "(END\\b)"},
                 {new Commands::Push{},  "(PUSH\\b\\ )" + _objectRegex},
@@ -36,18 +36,25 @@ namespace processorEmulator::CommandParser {
         std::smatch last_match{};
 
         std::string line;
-
         int numOfLine = 1;
+        bool isInvalidCommand;
+
         while (std::getline(file, line)) {
+            isInvalidCommand = true;
             for (const auto &item: _commandRegex) {
                 std::regex_search(line.cbegin(), line.cend(), last_match, std::regex(item.second));
                 if (!last_match.empty()) {
-                    Commands::BaseCommand *commandPtr = getCommandFromString(item.first, last_match, numOfLine);
-                    if (commandPtr) {
+                    if (item.first){
+                        Commands::BaseCommand *commandPtr = getCommandFromString(item.first, last_match, numOfLine);
                         result.push_back(std::move(*commandPtr));
                     }
+                    isInvalidCommand = false;
                     break;
                 }
+            }
+            if (isInvalidCommand) {
+                auto errorMessage = new std::string("Invalid Command");
+                throw ParserException(errorMessage->c_str(), numOfLine);
             }
             numOfLine++;
         }

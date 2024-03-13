@@ -5,6 +5,7 @@
 #include <string>
 #include <regex>
 #include <iostream>
+#include <memory>
 #include <Commands.h>
 #include <ProcessorEmulator.h>
 
@@ -12,15 +13,16 @@ namespace processorEmulator::CommandParser {
 
     struct ParserException : public std::exception {
 
-        explicit ParserException(const char *message) : message(message) {};
+        explicit ParserException(const char *message, int line = 0) : message(message), line(line) {};
 
         [[nodiscard]] const char *what() const noexcept override {
-            return message;
+            return (new std::string("Exception while Parsing: line " + std::to_string(line) + ". " + message))->c_str();
         }
 
     private:
 
         const char *message;
+        int line;
 
     };
 
@@ -51,9 +53,8 @@ namespace processorEmulator::CommandParser {
 
             if (match.length() < 3) {
                 auto *errorString =
-                        new std::string("Exception while Parsing: line " + std::to_string(numOfLine) +
-                                        ". Not enough arguments");
-                throw ParserException(errorString->c_str());
+                new std::string("Not enough arguments");
+                throw ParserException(errorString->c_str(), numOfLine);
             }
 
             std::string arg = match[2].str();
@@ -68,9 +69,8 @@ namespace processorEmulator::CommandParser {
                 };
                 if (!strRegisterMap.count(arg)) {
                     auto *errorString =
-                            new std::string("Exception while Parsing: line " + std::to_string(numOfLine) +
-                                            ". Invalid Register");
-                    throw ParserException(errorString->c_str());
+                            new std::string("Invalid Register");
+                    throw ParserException(errorString->c_str(), numOfLine);
                 }
                 auto *registerCommand = dynamic_cast<Commands::RegisterCommand *>(command);
                 registerCommand->setRegister(strRegisterMap[arg]);
