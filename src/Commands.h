@@ -5,7 +5,7 @@
 
 namespace processorEmulator::Commands {
 
-    using argType = int;
+
 
     enum class ArgType {
         NONE,
@@ -55,7 +55,7 @@ namespace processorEmulator::Commands {
 
         void setValue(argType value);
 
-    private:
+    protected:
 
         argType _value;
 
@@ -66,7 +66,6 @@ namespace processorEmulator::Commands {
     public:
 
         void execute() override;
-
 
     };
 
@@ -92,7 +91,7 @@ namespace processorEmulator::Commands {
 
         void setRegister(Register reg);
 
-    private:
+    protected:
 
         Register _reg;
 

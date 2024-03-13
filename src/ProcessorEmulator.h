@@ -8,22 +8,32 @@
 
 namespace processorEmulator {
 
-    enum class Register{
+    using argType = int;
+
+    enum class Register: int {
         AX, BX, CX, DX
     };
 
-    template<class T>
-    class Processor{
+    class Processor {
 
     public:
 
-        Processor(const Processor<T>&) = delete;
-        Processor(Processor&&) = delete;
-        Processor& operator=(const Processor&) = delete;
-        Processor& operator=(Processor&&) = delete;
+        enum class Status {
+            NOT_STARTED,
+            RUNNING,
+            ENDED
+        };
 
-        static Processor<T>& instance() {
-            static Processor<T> instance;
+        Processor(const Processor&) = delete;
+
+        Processor(Processor&&) = delete;
+
+        Processor &operator=(const Processor&) = delete;
+
+        Processor &operator=(Processor&&) = delete;
+
+        static Processor &instance() {
+            static Processor instance;
             return instance;
         }
 
@@ -31,13 +41,35 @@ namespace processorEmulator {
 
         }
 
+        void setStatus(Status newStatus) {
+            _status = newStatus;
+        }
+
+        Status getStatus() {
+            return _status;
+        }
+
+        bool isRunning() {
+            return getStatus() == Status::RUNNING;
+        }
+
+        Stack<argType> getStack(){
+            return _stack;
+        }
+
+        argType* getRegisters(){
+            return _registers;
+        }
+
 
     private:
 
-        T registers[4];
-        Stack<T> stack{};
+        argType _registers[4];
+        Stack<argType> _stack{};
+        Status _status{Status::NOT_STARTED};
 
         Processor() = default;
+
         ~Processor() = default;
 
     };

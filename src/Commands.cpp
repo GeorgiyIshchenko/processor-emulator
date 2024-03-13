@@ -1,12 +1,15 @@
+#include <iostream>
 #include <Commands.h>
 
 namespace processorEmulator {
 
+    Processor &processor = Processor::instance();
+
     std::string Commands::commandToString(Commands::BaseCommand *command) {
         std::map<ArgType, std::string> argTypeStrMap = {
-                {ArgType::NONE, "NONE"},
+                {ArgType::NONE,      "NONE"},
                 {ArgType::USER_TYPE, "USER_TYPE"},
-                {ArgType::REGISTER, "REGISTER"}
+                {ArgType::REGISTER,  "REGISTER"}
         };
         std::string repr = std::string(typeid(command).name()) + " ArgType: " + argTypeStrMap[command->getArgInfo()];
         return repr;
@@ -14,51 +17,76 @@ namespace processorEmulator {
 
 
     void Commands::Begin::execute() {
-        BaseCommand::execute();
+        processor.setStatus(Processor::Status::RUNNING);
     }
 
     void Commands::End::execute() {
-        BaseCommand::execute();
+        processor.setStatus(Processor::Status::ENDED);
     }
 
     void Commands::Push::execute() {
-        BaseCommand::execute();
+        if (processor.isRunning())
+            processor.getStack().push(_value);
     }
 
     void Commands::Pop::execute() {
-        BaseCommand::execute();
+        if (processor.isRunning())
+            processor.getStack().pop();
     }
 
     void Commands::PushR::execute() {
-        BaseCommand::execute();
+        if (processor.isRunning())
+            processor.getStack().push(processor.getRegisters()[static_cast<int>(_reg)]);
     }
 
     void Commands::PopR::execute() {
-        BaseCommand::execute();
+        if (processor.isRunning())
+            processor.getRegisters()[static_cast<int>(_reg)] = processor.getStack().pop();
     }
 
     void Commands::Add::execute() {
-        BaseCommand::execute();
+        if (processor.isRunning()) {
+            Stack<argType> stack = processor.getStack();
+            argType sum = stack.pop() + stack.pop();
+            stack.push(sum);
+        }
     }
 
     void Commands::Sub::execute() {
-        BaseCommand::execute();
+        if (processor.isRunning()) {
+            Stack<argType> stack = processor.getStack();
+            argType sum = stack.pop() - stack.pop();
+            stack.push(sum);
+        }
     }
 
     void Commands::Mul::execute() {
-        BaseCommand::execute();
+        if (processor.isRunning()) {
+            Stack<argType> stack = processor.getStack();
+            argType sum = stack.pop() * stack.pop();
+            stack.push(sum);
+        }
     }
 
     void Commands::Div::execute() {
-        BaseCommand::execute();
+        if (processor.isRunning()) {
+            Stack<argType> stack = processor.getStack();
+            argType sum = stack.pop() / stack.pop();
+            stack.push(sum);
+        }
     }
 
     void Commands::In::execute() {
-        BaseCommand::execute();
+        if (processor.isRunning()) {
+            argType input;
+            std::cin >> input;
+            processor.getStack().push(input);
+        }
     }
 
     void Commands::Out::execute() {
-        BaseCommand::execute();
+        if (processor.isRunning())
+            std::cout << processor.getStack().getTop() << std::endl;
     }
 
     Commands::ArgType Commands::BaseCommand::getArgInfo() {
@@ -77,7 +105,7 @@ namespace processorEmulator {
         return ArgType::USER_TYPE;
     }
 
-    void Commands::UserArgCommand::setValue(Commands::argType value) {
+    void Commands::UserArgCommand::setValue(argType value) {
         _value = value;
     }
 }
