@@ -50,9 +50,10 @@ namespace processorEmulator::CommandParser {
             if (argType == Commands::ArgType::NONE) return command;
 
             if (match.length() < 3) {
-                std::string errorString =
-                        "Exception while Parsing: line " + std::to_string(numOfLine) + ". Not enough arguments";
-                throw ParserException(errorString.c_str());
+                auto *errorString =
+                        new std::string("Exception while Parsing: line " + std::to_string(numOfLine) +
+                                        ". Not enough arguments");
+                throw ParserException(errorString->c_str());
             }
 
             std::string arg = match[2].str();
@@ -66,9 +67,10 @@ namespace processorEmulator::CommandParser {
                         {"DX", Register::DX}
                 };
                 if (!strRegisterMap.count(arg)) {
-                    std::string errorString =
-                            "Exception while Parsing: line " + std::to_string(numOfLine) + ". Invalid Register";
-                    throw ParserException(errorString.c_str());
+                    auto *errorString =
+                            new std::string("Exception while Parsing: line " + std::to_string(numOfLine) +
+                                            ". Invalid Register");
+                    throw ParserException(errorString->c_str());
                 }
                 auto *registerCommand = dynamic_cast<Commands::RegisterCommand *>(command);
                 registerCommand->setRegister(strRegisterMap[arg]);

@@ -18,8 +18,8 @@ namespace processorEmulator::CommandParser {
                 {new Commands::End{},   "(END\\b)"},
                 {new Commands::Push{},  "(PUSH\\b\\ )" + _objectRegex},
                 {new Commands::Pop{},   "(POP\\b)"},
-                {new Commands::PushR{}, "(PUSHR\\b\\ )([a-dA-D]X)"},
-                {new Commands::PopR{},  "(POPR\\b\\ )([a-dA-D]X)"},
+                {new Commands::PushR{}, "(PUSHR\\b\\ )([a-zA-Z]X)"},
+                {new Commands::PopR{},  "(POPR\\b\\ )([a-zA-Z]X)"},
                 {new Commands::Add{},   "(ADD\\b)"},
                 {new Commands::Sub{},   "(SUB\\b)"},
                 {new Commands::Mul{},   "(MUL\\b)"},
@@ -40,7 +40,6 @@ namespace processorEmulator::CommandParser {
         int numOfLine = 1;
         while (std::getline(file, line)) {
             for (const auto &item: _commandRegex) {
-                unsigned int regexLength = item.second.length();
                 std::regex_search(line.cbegin(), line.cend(), last_match, std::regex(item.second));
                 if (!last_match.empty()) {
                     Commands::BaseCommand *commandPtr = getCommandFromString(item.first, last_match, numOfLine);
