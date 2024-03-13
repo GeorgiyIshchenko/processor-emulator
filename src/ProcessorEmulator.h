@@ -4,8 +4,7 @@
 #include <vector>
 #include <map>
 
-#include <Stack.h>
-
+#include "Stack.h"
 
 
 namespace processorEmulator {
@@ -34,36 +33,21 @@ namespace processorEmulator {
 
         Processor &operator=(Processor &&) = delete;
 
-        static Processor &instance() {
-            static Processor instance;
-            return instance;
-        }
+        static Processor &instance();
 
-        void loadProgram(std::string programPath) {
+        void init();
 
+        void execute(std::string programPath);
 
-        }
+        void setStatus(Status newStatus) { _status = newStatus; }
 
+        Status getStatus() { return _status; }
 
-        void setStatus(Status newStatus) {
-            _status = newStatus;
-        }
+        bool isRunning() { return getStatus() == Status::RUNNING; }
 
-        Status getStatus() {
-            return _status;
-        }
+        Stack<argType>& getStack() { return _stack; }
 
-        bool isRunning() {
-            return getStatus() == Status::RUNNING;
-        }
-
-        Stack<argType> getStack() {
-            return _stack;
-        }
-
-        argType *getRegisters() {
-            return _registers;
-        }
+        argType *getRegisters() { return _registers; }
 
 
     private:

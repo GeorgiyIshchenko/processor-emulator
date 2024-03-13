@@ -17,7 +17,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        virtual void execute() {};
+        virtual void execute() { std::cout << "BASE COMMAND" << std::endl; };
 
         virtual ArgType getArgInfo();
 
@@ -57,7 +57,7 @@ namespace processorEmulator::Commands {
 
     protected:
 
-        argType _value;
+        argType _value{};
 
     };
 

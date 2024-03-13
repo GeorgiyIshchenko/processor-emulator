@@ -28,7 +28,7 @@ namespace processorEmulator {
         using sizeType = size_t;
 
     private:
-        static constexpr sizeType defaultCapacity{2};
+        static constexpr sizeType defaultCapacity{16};
 
         sizeType capacity{defaultCapacity};
         sizeType size{0};

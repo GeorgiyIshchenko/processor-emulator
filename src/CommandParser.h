@@ -26,61 +26,16 @@ namespace processorEmulator::CommandParser {
 
     };
 
-    enum class Token {
-        BEGIN, END,
-        PUSH, POP,
-        PUSHR, POPR,
-        ADD, SUB, MUL, DIV,
-        OUT, IN,
-        _EMPTY,
-    };
-
 
     class LineParser {
 
     public:
-        explicit LineParser(const char *programPath, const char *objectRegex = "([+-]?[1-9]*[0-9]*)");
+        explicit LineParser(std::string programPath, const char *objectRegex = "([+-]?[1-9]*[0-9]*)");
 
-        std::vector<Commands::BaseCommand> getCommandVector();
+        std::vector<std::shared_ptr<Commands::BaseCommand>> getCommandVector();
 
-        static Commands::BaseCommand *
-        getCommandFromString(Commands::BaseCommand *command, std::smatch match, int numOfLine) {
-            Commands::ArgType argType = command->getArgInfo();
-
-            std::cout << Commands::commandToString(command) << std::endl;
-
-            if (argType == Commands::ArgType::NONE) return command;
-
-            if (match.length() < 3) {
-                auto *errorString =
-                new std::string("Not enough arguments");
-                throw ParserException(errorString->c_str(), numOfLine);
-            }
-
-            std::string arg = match[2].str();
-
-            std::cout << arg << std::endl;
-            if (argType == Commands::ArgType::REGISTER) {
-                std::map<std::string, Register> strRegisterMap{
-                        {"AX", Register::AX},
-                        {"BX", Register::BX},
-                        {"CX", Register::CX},
-                        {"DX", Register::DX}
-                };
-                if (!strRegisterMap.count(arg)) {
-                    auto *errorString =
-                            new std::string("Invalid Register");
-                    throw ParserException(errorString->c_str(), numOfLine);
-                }
-                auto *registerCommand = dynamic_cast<Commands::RegisterCommand *>(command);
-                registerCommand->setRegister(strRegisterMap[arg]);
-                return registerCommand;
-            } else {
-                auto *userArgCommand = dynamic_cast<Commands::UserArgCommand *>(command);
-                userArgCommand->setValue(stoi(arg));
-                return command;
-            };
-        }
+        static std::shared_ptr<Commands::BaseCommand>
+        getCommandFromString(std::shared_ptr<Commands::BaseCommand> command, const std::smatch& match, int numOfLine);
 
 
     private:
@@ -91,7 +46,7 @@ namespace processorEmulator::CommandParser {
         // Regex for double: "([+-]?[1-9]*[0-9]+\\.[0-9]*)"
         std::string _objectRegex;
 
-        std::map<Commands::BaseCommand *, std::string> _commandRegex;
+        std::map<std::shared_ptr<Commands::BaseCommand>, std::string> _commandRegex;
 
     };
 

@@ -17,14 +17,17 @@ namespace processorEmulator {
 
 
     void Commands::Begin::execute() {
-        processor.setStatus(Processor::Status::RUNNING);
+        std::cout << "BEGIN COMMAND" << std::endl;
+        Processor::instance().setStatus(Processor::Status::RUNNING);
     }
 
     void Commands::End::execute() {
+        std::cout << "END COMMAND" << std::endl;
         processor.setStatus(Processor::Status::ENDED);
     }
 
     void Commands::Push::execute() {
+        std::cout << "PUSH COMMAND" << std::endl;
         if (processor.isRunning())
             processor.getStack().push(_value);
     }
@@ -40,11 +43,13 @@ namespace processorEmulator {
     }
 
     void Commands::PopR::execute() {
+        std::cout << "POPR COMMAND" << std::endl;
         if (processor.isRunning())
             processor.getRegisters()[static_cast<int>(_reg)] = processor.getStack().pop();
     }
 
     void Commands::Add::execute() {
+        std::cout << "ADD COMMAND" << std::endl;
         if (processor.isRunning()) {
             Stack<argType> stack = processor.getStack();
             argType sum = stack.pop() + stack.pop();
@@ -85,6 +90,7 @@ namespace processorEmulator {
     }
 
     void Commands::Out::execute() {
+        std::cout << "OUT COMMAND" << std::endl;
         if (processor.isRunning())
             std::cout << processor.getStack().getTop() << std::endl;
     }
