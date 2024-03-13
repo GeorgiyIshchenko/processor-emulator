@@ -12,13 +12,6 @@ namespace processorEmulator {
         AX, BX, CX, DX
     };
 
-//    std::map<std::string, Register> RegisterMap{
-//            {"AX", Register::AX},
-//            {"BX", Register::BX},
-//            {"CX", Register::CX},
-//            {"DX", Register::DX},
-//    };
-
     template<class T>
     class Processor{
 

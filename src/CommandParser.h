@@ -41,41 +41,43 @@ namespace processorEmulator::CommandParser {
 
         std::vector<Commands::BaseCommand> getCommandVector();
 
-        static Commands::BaseCommand *getCommandFromString(Token command, std::smatch match) {
-            switch (command) {
-                case Token::BEGIN:
-                    return new Commands::Begin{};
-                case Token::END:
-                    return new Commands::End{};
-                case Token::PUSH:
-                    if (match.length() < 3)
-                        throw ParserException("Exception while Parsing: Invalid PUSH command");
-                    return new Commands::Push{stoi(match[2].str())};
-                case Token::POP:
-                    return new Commands::Pop{};
-                case Token::PUSHR:
-                    if (match.length() < 3)
-                        throw ParserException("Exception while Parsing: Invalid PUSHR command");
-                    return new Commands::PushR{RegisterMap.at(match[2].str())};
-                case Token::POPR:
-                    if (match.length() < 3)
-                        throw ParserException("Exception while Parsing: Invalid POPR command");
-                    return new Commands::PopR{RegisterMap.at(match[2].str())};
-                case Token::ADD:
-                    return new Commands::Add{};
-                case Token::SUB:
-                    return new Commands::Sub{};
-                case Token::MUL:
-                    return new Commands::Mul{};
-                case Token::DIV:
-                    return new Commands::Div{};
-                case Token::OUT:
-                    return new Commands::Out{};
-                case Token::IN:
-                    return new Commands::In{};
-                default:
-                    return nullptr;
+        static Commands::BaseCommand *
+        getCommandFromString(Commands::BaseCommand *command, std::smatch match, int numOfLine) {
+            Commands::ArgType argType = command->getArgInfo();
+
+            std::cout << Commands::commandToString(command) << std::endl;
+
+            if (argType == Commands::ArgType::NONE) return command;
+
+            if (match.length() < 3) {
+                std::string errorString =
+                        "Exception while Parsing: line " + std::to_string(numOfLine) + ". Not enough arguments";
+                throw ParserException(errorString.c_str());
             }
+
+            std::string arg = match[2].str();
+
+            std::cout << arg << std::endl;
+            if (argType == Commands::ArgType::REGISTER) {
+                std::map<std::string, Register> strRegisterMap{
+                        {"AX", Register::AX},
+                        {"BX", Register::BX},
+                        {"CX", Register::CX},
+                        {"DX", Register::DX}
+                };
+                if (!strRegisterMap.count(arg)) {
+                    std::string errorString =
+                            "Exception while Parsing: line " + std::to_string(numOfLine) + ". Invalid Register";
+                    throw ParserException(errorString.c_str());
+                }
+                auto *registerCommand = dynamic_cast<Commands::RegisterCommand *>(command);
+                registerCommand->setRegister(strRegisterMap[arg]);
+                return registerCommand;
+            } else {
+                auto *userArgCommand = dynamic_cast<Commands::UserArgCommand *>(command);
+                userArgCommand->setValue(stoi(arg));
+                return command;
+            };
         }
 
 
@@ -86,7 +88,7 @@ namespace processorEmulator::CommandParser {
         // Default is double
         std::string _objectRegex;
 
-        std::map<Token, std::string> _commandRegex;
+        std::map<Commands::BaseCommand *, std::string> _commandRegex;
 
     };
 

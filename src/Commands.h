@@ -7,15 +7,27 @@ namespace processorEmulator::Commands {
 
     using argType = int;
 
+    enum class ArgType {
+        NONE,
+        REGISTER,
+        USER_TYPE
+    };
+
     class BaseCommand {
 
     public:
 
         virtual void execute() {};
 
+        virtual ArgType getArgInfo();
+
     };
 
+    std::string commandToString(BaseCommand* command);
+
     class Begin : public BaseCommand {
+
+    public:
 
         void execute() override;
 
@@ -23,17 +35,25 @@ namespace processorEmulator::Commands {
 
     class End : public BaseCommand {
 
+    public:
+
         void execute() override;
 
     };
 
-    class Push : public BaseCommand {
+    class UserArgCommand : public BaseCommand {
 
     public:
 
-        explicit Push(argType value) : _value(value) {}
+        UserArgCommand() = default;
 
-        void execute() override;
+        explicit UserArgCommand(argType value) : _value(value) {};
+
+        void execute() override = 0;
+
+        ArgType getArgInfo() override;
+
+        void setValue(argType value);
 
     private:
 
@@ -41,19 +61,36 @@ namespace processorEmulator::Commands {
 
     };
 
+    class Push : public UserArgCommand {
+
+    public:
+
+        void execute() override;
+
+
+    };
+
     class Pop : public BaseCommand {
 
+    public:
+
         void execute() override;
 
     };
 
-    class PushR : public BaseCommand {
+    class RegisterCommand : public BaseCommand {
 
     public:
 
-        explicit PushR(Register reg) : _reg(reg) {};
+        RegisterCommand() { _reg = Register::AX; };
 
-        void execute() override;
+        explicit RegisterCommand(Register reg) : _reg(reg) {};
+
+        void execute() override = 0;
+
+        ArgType getArgInfo() override;
+
+        void setRegister(Register reg);
 
     private:
 
@@ -61,17 +98,19 @@ namespace processorEmulator::Commands {
 
     };
 
-    class PopR : public BaseCommand {
+    class PushR : public RegisterCommand {
 
     public:
 
-        explicit PopR(Register reg) : _reg(reg) {};
-
         void execute() override;
 
-    private:
+    };
 
-        Register _reg;
+    class PopR : public RegisterCommand {
+
+    public:
+
+        void execute() override;
 
     };
 

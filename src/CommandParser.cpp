@@ -13,19 +13,19 @@ namespace processorEmulator::CommandParser {
         _programPath = programPath;
         _objectRegex = objectRegex;
         _commandRegex = {
-                {Token::_EMPTY, "(\\n)"},
-                {Token::BEGIN,  "(BEGIN\\b)"},
-                {Token::END,    "(END\\b)"},
-                {Token::PUSH,   "(PUSH\\b\\ )" + _objectRegex},
-                {Token::POP,    "(POP\\b)"},
-                {Token::PUSHR,  "(PUSHR\\b\\ )([a-dA-D])"},
-                {Token::POPR,   "(POPR\\b\\ )([a-dA-D])"},
-                {Token::ADD,    "(ADD\\b)"},
-                {Token::SUB,    "(SUB\\b)"},
-                {Token::MUL,    "(MUL\\b)"},
-                {Token::DIV,    "(DIV\\b)"},
-                {Token::OUT,    "(OUT\\b)"},
-                {Token::IN,    "(IN\\b)"},
+                {nullptr,               "(\\n)"},
+                {new Commands::Begin{}, "(BEGIN\\b)"},
+                {new Commands::End{},   "(END\\b)"},
+                {new Commands::Push{},  "(PUSH\\b\\ )" + _objectRegex},
+                {new Commands::Pop{},   "(POP\\b)"},
+                {new Commands::PushR{}, "(PUSHR\\b\\ )([a-dA-D]X)"},
+                {new Commands::PopR{},  "(POPR\\b\\ )([a-dA-D]X)"},
+                {new Commands::Add{},   "(ADD\\b)"},
+                {new Commands::Sub{},   "(SUB\\b)"},
+                {new Commands::Mul{},   "(MUL\\b)"},
+                {new Commands::Div{},   "(DIV\\b)"},
+                {new Commands::Out{},   "(OUT\\b)"},
+                {new Commands::In{},    "(IN\\b)"},
         };
     }
 
@@ -36,18 +36,21 @@ namespace processorEmulator::CommandParser {
         std::smatch last_match{};
 
         std::string line;
+
+        int numOfLine = 1;
         while (std::getline(file, line)) {
             for (const auto &item: _commandRegex) {
                 unsigned int regexLength = item.second.length();
                 std::regex_search(line.cbegin(), line.cend(), last_match, std::regex(item.second));
                 if (!last_match.empty()) {
-                    Commands::BaseCommand* commandPtr = getCommandFromString(item.first, last_match);
-                    if (commandPtr){
+                    Commands::BaseCommand *commandPtr = getCommandFromString(item.first, last_match, numOfLine);
+                    if (commandPtr) {
                         result.push_back(std::move(*commandPtr));
                     }
                     break;
                 }
             }
+            numOfLine++;
         }
 
         return result;
