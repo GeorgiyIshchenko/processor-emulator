@@ -1,5 +1,8 @@
 #include <iostream>
-#include <Commands.h>
+#include <regex>
+
+#include "Commands.h"
+#include "CommandParser.h"
 
 namespace processorEmulator {
 
@@ -101,11 +104,41 @@ namespace processorEmulator {
         _reg = reg;
     }
 
+    void Commands::RegisterCommand::buildFromRegex(const std::smatch &match, int numOfLine) {
+        if (match.length() < 3) {
+            auto *errorString =
+                    new std::string("Not enough arguments");
+            throw CommandParser::ParserException(errorString->c_str(), numOfLine);
+        }
+        std::string arg = match[2].str();
+        std::map<std::string, Register> strRegisterMap{
+                {"AX", Register::AX},
+                {"BX", Register::BX},
+                {"CX", Register::CX},
+                {"DX", Register::DX}
+        };
+        if (!strRegisterMap.count(arg)) {
+            auto *errorString =
+                    new std::string("Invalid Register");
+            throw CommandParser::ParserException(errorString->c_str(), numOfLine);
+        }
+        _reg = strRegisterMap[arg];
+    }
+
     Commands::ArgType Commands::UserArgCommand::getArgInfo() {
         return ArgType::USER_TYPE;
     }
 
     void Commands::UserArgCommand::setValue(argType value) {
         _value = value;
+    }
+
+    void Commands::UserArgCommand::buildFromRegex(const std::smatch &match, int numOfLine) {
+        if (match.length() < 3) {
+            auto *errorString =
+                    new std::string("Not enough arguments");
+            throw CommandParser::ParserException(errorString->c_str(), numOfLine);
+        }
+        _value = stoi(match[2].str());
     }
 }

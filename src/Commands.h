@@ -1,7 +1,9 @@
 #ifndef PROCESSOREMULATOR_COMMANDS_H
 #define PROCESSOREMULATOR_COMMANDS_H
 
-#include <ProcessorEmulator.h>
+#include <regex>
+
+#include "ProcessorEmulator.h"
 
 namespace processorEmulator::Commands {
 
@@ -20,6 +22,8 @@ namespace processorEmulator::Commands {
         virtual void execute() { std::cout << "BASE COMMAND" << std::endl; };
 
         virtual ArgType getArgInfo();
+
+        virtual void buildFromRegex(const std::smatch &match, int numOfLine) {};
 
     };
 
@@ -54,6 +58,8 @@ namespace processorEmulator::Commands {
         ArgType getArgInfo() override;
 
         void setValue(argType value);
+
+        void buildFromRegex(const std::smatch &match, int numOfLine) override;
 
     protected:
 
@@ -90,6 +96,8 @@ namespace processorEmulator::Commands {
         ArgType getArgInfo() override;
 
         void setRegister(Register reg);
+
+        void buildFromRegex(const std::smatch &match, int numOfLine) override;
 
     protected:
 
