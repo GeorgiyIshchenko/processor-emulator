@@ -19,6 +19,7 @@ include_directories(src)
 set(SRC
         src/Stack.h
         src/ProcessorEmulator.h
+        src/ProcessorEmulator.cpp
         src/CommandParser.h
         src/Commands.h
         src/CommandParser.cpp
@@ -32,7 +33,7 @@ add_executable(${PROJECT_NAME}_stack_tests tests/stack_tests.cpp)
 target_link_libraries(${PROJECT_NAME}_stack_tests PRIVATE ${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME}_stack_tests PRIVATE gtest_main)
 
-add_executable(${PROJECT_NAME}_parser_tests tests/parserTests.cpp)
+add_executable(${PROJECT_NAME}_parser_tests tests/emulTests.cpp)
 target_link_libraries(${PROJECT_NAME}_parser_tests PRIVATE ${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME}_parser_tests PRIVATE gtest_main)
 

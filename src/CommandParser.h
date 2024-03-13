@@ -39,7 +39,7 @@ namespace processorEmulator::CommandParser {
     class LineParser {
 
     public:
-        explicit LineParser(const char *programPath, const char *objectRegex = "([+-]?[1-9]*[0-9]+\\.[0-9]*)");
+        explicit LineParser(const char *programPath, const char *objectRegex = "([+-]?[1-9]*[0-9]*)");
 
         std::vector<Commands::BaseCommand> getCommandVector();
 
@@ -87,7 +87,8 @@ namespace processorEmulator::CommandParser {
 
         std::string _programPath;
 
-        // Default is double
+        // Default is int
+        // Regex for double: "([+-]?[1-9]*[0-9]+\\.[0-9]*)"
         std::string _objectRegex;
 
         std::map<Commands::BaseCommand *, std::string> _commandRegex;

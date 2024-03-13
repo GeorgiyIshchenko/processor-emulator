@@ -6,11 +6,13 @@
 
 #include <Stack.h>
 
+
+
 namespace processorEmulator {
 
     using argType = int;
 
-    enum class Register: int {
+    enum class Register : int {
         AX, BX, CX, DX
     };
 
@@ -24,13 +26,13 @@ namespace processorEmulator {
             ENDED
         };
 
-        Processor(const Processor&) = delete;
+        Processor(const Processor &) = delete;
 
-        Processor(Processor&&) = delete;
+        Processor(Processor &&) = delete;
 
-        Processor &operator=(const Processor&) = delete;
+        Processor &operator=(const Processor &) = delete;
 
-        Processor &operator=(Processor&&) = delete;
+        Processor &operator=(Processor &&) = delete;
 
         static Processor &instance() {
             static Processor instance;
@@ -39,7 +41,9 @@ namespace processorEmulator {
 
         void loadProgram(std::string programPath) {
 
+
         }
+
 
         void setStatus(Status newStatus) {
             _status = newStatus;
@@ -53,11 +57,11 @@ namespace processorEmulator {
             return getStatus() == Status::RUNNING;
         }
 
-        Stack<argType> getStack(){
+        Stack<argType> getStack() {
             return _stack;
         }
 
-        argType* getRegisters(){
+        argType *getRegisters() {
             return _registers;
         }
 

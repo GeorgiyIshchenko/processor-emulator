@@ -10,7 +10,7 @@ using namespace processorEmulator;
 TEST(Operation, Parsing){
     try {
         std::vector<Commands::BaseCommand> commands;
-        CommandParser::LineParser parser{"/home/gosha/CLionProjects/ProcessorEmulator/tests/test_program", "([+-]?[1-9]*[0-9]*)"};
+        CommandParser::LineParser parser{"/home/gosha/CLionProjects/ProcessorEmulator/tests/test_program"};
         commands = parser.getCommandVector();
     }
     catch (CommandParser::ParserException& e){
