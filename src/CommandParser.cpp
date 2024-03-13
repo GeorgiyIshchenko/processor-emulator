@@ -32,6 +32,8 @@ namespace processorEmulator::CommandParser {
 
     std::vector<std::shared_ptr<Commands::BaseCommand>> LineParser::getCommandVector() {
         std::ifstream file(_programPath);
+        if (file.bad())
+            throw ParserException("Invalid Path");
         std::vector<std::shared_ptr<Commands::BaseCommand>> result;
 
         std::smatch last_match{};

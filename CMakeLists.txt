@@ -24,6 +24,7 @@ set(SRC
         src/Commands.h
         src/CommandParser.cpp
         src/Commands.cpp
+        main.cpp
 )
 
 add_library(${PROJECT_NAME} ${SRC})
@@ -36,6 +37,10 @@ target_link_libraries(${PROJECT_NAME}_stack_tests PRIVATE gtest_main)
 add_executable(${PROJECT_NAME}_parser_tests tests/emulTests.cpp)
 target_link_libraries(${PROJECT_NAME}_parser_tests PRIVATE ${PROJECT_NAME})
 target_link_libraries(${PROJECT_NAME}_parser_tests PRIVATE gtest_main)
+
+add_executable(run main.cpp)
+target_link_libraries(run PRIVATE ${PROJECT_NAME})
+target_link_libraries(run PRIVATE gtest_main)
 
 include(GoogleTest)
 gtest_discover_tests(${PROJECT_NAME}_stack_tests)

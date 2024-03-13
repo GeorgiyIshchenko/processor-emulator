@@ -27,3 +27,12 @@ TEST(Operation, Emul){
     }
 }
 
+TEST(Operation, Fibonachi){
+    try {
+        Processor::instance().execute("../tests/fibonachi");
+    }
+    catch (CommandParser::ParserException& e){
+        std::cout << e.what() << std::endl;
+    }
+}
+
