@@ -46,7 +46,7 @@ namespace processorEmulator::CommandParser {
         // Regex for double: "([+-]?[1-9]*[0-9]+\\.[0-9]*)"
         std::string _objectRegex;
 
-        std::map<std::shared_ptr<Commands::BaseCommand>, std::string> _commandRegex;
+        std::map<std::string, std::function<std::shared_ptr<Commands::BaseCommand>()>> _commandRegex;
 
     };
 
