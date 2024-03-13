@@ -1,16 +1,23 @@
-#include <vector>
-
-
 #ifndef PROCESSOREMULATOR_H
 #define PROCESSOREMULATOR_H
 
-#include "Stack.h"
+#include <vector>
+#include <map>
+
+#include <Stack.h>
 
 namespace processorEmulator {
 
     enum class Register{
         AX, BX, CX, DX
     };
+
+//    std::map<std::string, Register> RegisterMap{
+//            {"AX", Register::AX},
+//            {"BX", Register::BX},
+//            {"CX", Register::CX},
+//            {"DX", Register::DX},
+//    };
 
     template<class T>
     class Processor{

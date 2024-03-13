@@ -1,14 +1,12 @@
+#ifndef PROCESSOREMULATOR_COMMANDPARSER_H
+#define PROCESSOREMULATOR_COMMANDPARSER_H
+
 #include <vector>
 #include <string>
 #include <regex>
 #include <iostream>
 #include <Commands.h>
 #include <ProcessorEmulator.h>
-
-
-#ifndef PROCESSOREMULATOR_COMMANDPARSER_H
-#define PROCESSOREMULATOR_COMMANDPARSER_H
-
 
 namespace processorEmulator::CommandParser {
 
@@ -50,14 +48,19 @@ namespace processorEmulator::CommandParser {
                 case Token::END:
                     return new Commands::End{};
                 case Token::PUSH:
+                    if (match.length() < 3)
+                        throw ParserException("Exception while Parsing: Invalid PUSH command");
                     return new Commands::Push{stoi(match[2].str())};
                 case Token::POP:
                     return new Commands::Pop{};
-                    // TODO DODELAT
                 case Token::PUSHR:
-                    return new Commands::PushR{Register{}};
+                    if (match.length() < 3)
+                        throw ParserException("Exception while Parsing: Invalid PUSHR command");
+                    return new Commands::PushR{RegisterMap.at(match[2].str())};
                 case Token::POPR:
-                    return new Commands::PopR{Register{}};
+                    if (match.length() < 3)
+                        throw ParserException("Exception while Parsing: Invalid POPR command");
+                    return new Commands::PopR{RegisterMap.at(match[2].str())};
                 case Token::ADD:
                     return new Commands::Add{};
                 case Token::SUB:
