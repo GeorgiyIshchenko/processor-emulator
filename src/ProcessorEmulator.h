@@ -45,18 +45,22 @@ namespace processorEmulator {
 
         bool isRunning() { return getStatus() == Status::RUNNING; }
 
-        Stack<argType>& getStack() { return _stack; }
+        Stack<argType>* getStack() { return _stack; }
 
         argType *getRegisters() { return _registers; }
 
 
     private:
 
-        argType _registers[4];
-        Stack<argType> _stack{};
-        Status _status{Status::NOT_STARTED};
+        argType* _registers;
+        Stack<argType>* _stack;
+        Status _status;
 
-        Processor() = default;
+        Processor(){
+            _registers = new int[4];
+            _stack = new Stack<argType>{};
+            _status = Status::NOT_STARTED;
+        };
 
         ~Processor() = default;
 
