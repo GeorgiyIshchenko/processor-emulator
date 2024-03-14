@@ -8,27 +8,16 @@
 namespace processorEmulator::Commands {
 
 
-
-    enum class ArgType {
-        NONE,
-        REGISTER,
-        USER_TYPE
-    };
-
     class BaseCommand {
 
     public:
 
-        virtual void execute() { std::cout << "BASE COMMAND" << std::endl; };
+        virtual void execute() {};
 
-        virtual ArgType getArgInfo();
-
-        virtual void buildFromRegex(const std::smatch &match, int numOfLine) {};
+        virtual void setArgFromRegex(const std::smatch &match, int numOfLine) {};
 
     };
-
-    std::string commandToString(BaseCommand* command);
-
+    
     class Begin : public BaseCommand {
 
     public:
@@ -51,15 +40,9 @@ namespace processorEmulator::Commands {
 
         UserArgCommand() = default;
 
-        explicit UserArgCommand(argType value) : _value(value) {};
-
         void execute() override = 0;
 
-        ArgType getArgInfo() override;
-
-        void setValue(argType value);
-
-        void buildFromRegex(const std::smatch &match, int numOfLine) override;
+        void setArgFromRegex(const std::smatch &match, int numOfLine) override;
 
     protected:
 
@@ -89,15 +72,9 @@ namespace processorEmulator::Commands {
 
         RegisterCommand() { _reg = Register::AX; };
 
-        explicit RegisterCommand(Register reg) : _reg(reg) {};
-
         void execute() override = 0;
 
-        ArgType getArgInfo() override;
-
-        void setRegister(Register reg);
-
-        void buildFromRegex(const std::smatch &match, int numOfLine) override;
+        void setArgFromRegex(const std::smatch &match, int numOfLine) override;
 
     protected:
 

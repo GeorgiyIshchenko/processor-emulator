@@ -49,7 +49,7 @@ namespace processorEmulator::CommandParser {
                 if (!last_match.empty()) {
                     auto command = item.second();
                     if (command) {
-                        command->buildFromRegex(last_match, numOfLine);
+                        command->setArgFromRegex(last_match, numOfLine);
                         result.push_back(command);
                     }
                     isInvalidCommand = false;
@@ -66,40 +66,4 @@ namespace processorEmulator::CommandParser {
         return result;
     }
 
-//    std::shared_ptr<Commands::BaseCommand>
-//    LineParser::getCommandFromString(std::shared_ptr<Commands::BaseCommand> command, const std::smatch &match,
-//                                     int numOfLine) {
-//        Commands::ArgType argType = command->getArgInfo();
-//
-//        if (argType == Commands::ArgType::NONE) return command;
-//
-//        if (match.length() < 3) {
-//            auto *errorString =
-//                    new std::string("Not enough arguments");
-//            throw ParserException(errorString->c_str(), numOfLine);
-//        }
-//
-//        std::string arg = match[2].str();
-//
-//        if (argType == Commands::ArgType::REGISTER) {
-//            std::map<std::string, Register> strRegisterMap{
-//                    {"AX", Register::AX},
-//                    {"BX", Register::BX},
-//                    {"CX", Register::CX},
-//                    {"DX", Register::DX}
-//            };
-//            if (!strRegisterMap.count(arg)) {
-//                auto *errorString =
-//                        new std::string("Invalid Register");
-//                throw ParserException(errorString->c_str(), numOfLine);
-//            }
-//            auto registerCommand = dynamic_pointer_cast<Commands::RegisterCommand>(command);
-//            registerCommand->setRegister(strRegisterMap[arg]);
-//            return registerCommand;
-//        } else {
-//            auto userArgCommand = dynamic_pointer_cast<Commands::UserArgCommand>(command);
-//            userArgCommand->setValue(stoi(arg));
-//            return command;
-//        };
-//    }
 }

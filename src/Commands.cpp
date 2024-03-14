@@ -8,17 +8,6 @@ namespace processorEmulator {
 
     Processor &processor = Processor::instance();
 
-    std::string Commands::commandToString(Commands::BaseCommand *command) {
-        std::map<ArgType, std::string> argTypeStrMap = {
-                {ArgType::NONE,      "NONE"},
-                {ArgType::USER_TYPE, "USER_TYPE"},
-                {ArgType::REGISTER,  "REGISTER"}
-        };
-        std::string repr = std::string(typeid(command).name()) + " ArgType: " + argTypeStrMap[command->getArgInfo()];
-        return repr;
-    }
-
-
     void Commands::Begin::execute() {
         Processor::instance().setStatus(Processor::Status::RUNNING);
     }
@@ -92,19 +81,7 @@ namespace processorEmulator {
             std::cout << processor.getStack()->getTop() << std::endl;
     }
 
-    Commands::ArgType Commands::BaseCommand::getArgInfo() {
-        return Commands::ArgType::NONE;
-    }
-
-    Commands::ArgType Commands::RegisterCommand::getArgInfo() {
-        return Commands::ArgType::REGISTER;
-    }
-
-    void Commands::RegisterCommand::setRegister(Register reg) {
-        _reg = reg;
-    }
-
-    void Commands::RegisterCommand::buildFromRegex(const std::smatch &match, int numOfLine) {
+    void Commands::RegisterCommand::setArgFromRegex(const std::smatch &match, int numOfLine) {
         if (match.length() < 3) {
             auto *errorString =
                     new std::string("Not enough arguments");
@@ -125,15 +102,7 @@ namespace processorEmulator {
         _reg = strRegisterMap[arg];
     }
 
-    Commands::ArgType Commands::UserArgCommand::getArgInfo() {
-        return ArgType::USER_TYPE;
-    }
-
-    void Commands::UserArgCommand::setValue(argType value) {
-        _value = value;
-    }
-
-    void Commands::UserArgCommand::buildFromRegex(const std::smatch &match, int numOfLine) {
+    void Commands::UserArgCommand::setArgFromRegex(const std::smatch &match, int numOfLine) {
         if (match.length() < 3) {
             auto *errorString =
                     new std::string("Not enough arguments");

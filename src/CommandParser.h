@@ -34,9 +34,6 @@ namespace processorEmulator::CommandParser {
 
         std::vector<std::shared_ptr<Commands::BaseCommand>> getCommandVector();
 
-        static std::shared_ptr<Commands::BaseCommand>
-        getCommandFromString(std::shared_ptr<Commands::BaseCommand> command, const std::smatch& match, int numOfLine);
-
 
     private:
 
