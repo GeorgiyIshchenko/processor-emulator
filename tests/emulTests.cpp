@@ -29,7 +29,7 @@ TEST(Operation, Emul){
 
 TEST(Operation, Fibonachi){
     try {
-        Processor::instance().execute("../tests/fibonachi");
+        Processor::instance().execute("/home/gosha/CLionProjects/ProcessorEmulator/tests/fibonachi");
     }
     catch (CommandParser::ParserException& e){
         std::cout << e.what() << std::endl;

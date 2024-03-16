@@ -19,7 +19,9 @@ namespace processorEmulator::Commands {
 
         virtual void setArgFromRegex(const std::smatch &match, int numOfLine) {};
 
-    private:
+        virtual std::string getStringForRegex();
+
+    protected:
 
         std::string _parseName;
 
@@ -49,16 +51,23 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit UserArgCommand(std::string parseName, argType value = 0) : BaseCommand(
-                std::move(parseName)) { _value = value; };
+        explicit UserArgCommand(std::string parseName, std::string objectRegex, argType value = 0) :
+        BaseCommand(std::move(parseName)) {
+            _value = value;
+            _objectRegex = std::move(objectRegex);
+        };
 
         void execute() override = 0;
 
         void setArgFromRegex(const std::smatch &match, int numOfLine) override;
 
+        std::string getStringForRegex() override;
+
     protected:
 
         argType _value{};
+
+        std::string _objectRegex;
 
     };
 
@@ -66,8 +75,8 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit Push(std::string parseName = "PUSH", argType value = 0) : UserArgCommand(std::move(parseName),
-                                                                                          value) {};
+        explicit Push(std::string parseName = "PUSH", std::string objectRegex = "([+-]?[1-9]*[0-9]*)",
+                      argType value = 0) : UserArgCommand(std::move(parseName), std::move(objectRegex), value) {};
 
         void execute() override;
 
@@ -93,6 +102,8 @@ namespace processorEmulator::Commands {
         void execute() override = 0;
 
         void setArgFromRegex(const std::smatch &match, int numOfLine) override;
+
+        std::string getStringForRegex() override;
 
     protected:
 

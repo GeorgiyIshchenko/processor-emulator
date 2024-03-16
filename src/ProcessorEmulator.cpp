@@ -14,9 +14,8 @@ namespace processorEmulator {
     }
 
     void Processor::execute(std::string programPath) {
-        std::vector<std::shared_ptr<Commands::BaseCommand>> commands;
         CommandParser::LineParser parser{std::move(programPath)};
-        commands = parser.getCommandVector();
+        auto commands = parser.getCommandVector();
         for (const auto& command: commands) {
             command->execute();
         }

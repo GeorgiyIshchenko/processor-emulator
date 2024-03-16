@@ -110,4 +110,16 @@ namespace processorEmulator {
         }
         _value = stoi(match[2].str());
     }
+
+    std::string Commands::UserArgCommand::getStringForRegex() {
+        return "(" + _parseName + "\\b)\\ " + _objectRegex;
+    }
+
+    std::string Commands::RegisterCommand::getStringForRegex() {
+        return "(" + _parseName + "\\b)\\ ([a-zA-Z]X)";
+    }
+
+    std::string Commands::BaseCommand::getStringForRegex() {
+        return "(" + _parseName + "\\b)";
+    }
 }

@@ -10,24 +10,18 @@
 
 namespace processorEmulator::CommandParser {
 
+    template<class T>
+    std::shared_ptr<T> _() {
+        return std::make_shared<T>(T());
+    }
+
     CommandParser::LineParser::LineParser(std::string programPath, const char *objectRegex) {
         _programPath = std::move(programPath);
         _objectRegex = objectRegex;
-        _commandRegex = {
-                {"(^\\s*$)",                    []() { return nullptr; }},
-                {"(BEGIN\\b)",                  []() { return std::make_shared<Commands::Begin>(Commands::Begin{}); }},
-                {"(END\\b)",                    []() { return std::make_shared<Commands::End>(Commands::End{}); }},
-                {"(PUSH\\b\\ )" + _objectRegex, []() { return std::make_shared<Commands::Push>(Commands::Push{}); }},
-                {"(POP\\b)",                    []() { return std::make_shared<Commands::Pop>(Commands::Pop{}); },},
-                {"(PUSHR\\b\\ )([a-zA-Z]X)",    []() { return std::make_shared<Commands::PushR>(Commands::PushR{}); }},
-                {"(POPR\\b\\ )([a-zA-Z]X)",     []() { return std::make_shared<Commands::PopR>(Commands::PopR{}); }},
-                {"(ADD\\b)",                    []() { return std::make_shared<Commands::Add>(Commands::Add{}); }},
-                {"(SUB\\b)",                    []() { return std::make_shared<Commands::Sub>(Commands::Sub{}); }},
-                {"(MUL\\b)",                    []() { return std::make_shared<Commands::Mul>(Commands::Mul{}); }},
-                {"(DIV\\b)",                    []() { return std::make_shared<Commands::Div>(Commands::Div{}); }},
-                {"(OUT\\b)",                    []() { return std::make_shared<Commands::Out>(Commands::Out{}); }},
-                {"(IN\\b)",                     []() { return std::make_shared<Commands::In>(Commands::In{}); }},
-        };
+
+        _commandVector = {_<Commands::Begin>, _<Commands::End>, _<Commands::Push>, _<Commands::Pop>, _<Commands::PushR>,
+                          _<Commands::PopR>, _<Commands::Add>, _<Commands::Sub>, _<Commands::Mul>, _<Commands::Div>,
+                          _<Commands::In>, _<Commands::Out>};
     }
 
     std::vector<std::shared_ptr<Commands::BaseCommand>> LineParser::getCommandVector() {
@@ -43,15 +37,14 @@ namespace processorEmulator::CommandParser {
         bool isInvalidCommand;
 
         while (std::getline(file, line)) {
+            if (line.empty()) continue;
             isInvalidCommand = true;
-            for (const auto &item: _commandRegex) {
-                std::regex_search(line.cbegin(), line.cend(), last_match, std::regex(item.first));
+            for (const auto &commandGenerator: _commandVector) {
+                auto command = commandGenerator();
+                std::regex_search(line.cbegin(), line.cend(), last_match, std::regex(command->getStringForRegex()));
                 if (!last_match.empty()) {
-                    auto command = item.second();
-                    if (command) {
-                        command->setArgFromRegex(last_match, numOfLine);
-                        result.push_back(command);
-                    }
+                    command->setArgFromRegex(last_match, numOfLine);
+                    result.push_back(command);
                     isInvalidCommand = false;
                     break;
                 }
@@ -62,7 +55,7 @@ namespace processorEmulator::CommandParser {
             }
             numOfLine++;
         }
-
+        file.close();
         return result;
     }
 
