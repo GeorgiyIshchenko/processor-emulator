@@ -1,7 +1,6 @@
 #include <iostream>
 
-#include <ProcessorEmulator.h>
-#include <CommandParser.h>
+#include <Starter.h>
 
 using namespace processorEmulator;
 
@@ -10,11 +9,7 @@ int main(int argc, char *argv[]) {
         std::cout << "No path" << std::endl;
         return 1;
     }
-    try {
-        Processor::instance().execute(argv[1]);
-    }
-    catch (CommandParser::ParserException &e) {
-        std::cout << e.what() << std::endl;
-    }
+    Starter starter{argv[1]};
+    starter.doit();
     return 0;
 }

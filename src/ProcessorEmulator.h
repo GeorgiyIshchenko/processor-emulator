@@ -25,43 +25,27 @@ namespace processorEmulator {
             ENDED
         };
 
-        Processor(const Processor &) = delete;
-
-        Processor(Processor &&) = delete;
-
-        Processor &operator=(const Processor &) = delete;
-
-        Processor &operator=(Processor &&) = delete;
-
-        static Processor &instance();
-
-        void execute(std::string programPath);
-
-        void setStatus(Status newStatus) { _status = newStatus; }
-
-        Status getStatus() { return _status; }
-
-        bool isRunning() { return getStatus() == Status::RUNNING; }
-
-        Stack<argType>* getStack() { return _stack; }
-
-        argType *getRegisters() { return _registers; }
-
-
-    private:
-
-        argType* _registers;
-        Stack<argType>* _stack;
-
-        Status _status;
+        struct ProcessorState {
+            argType* registers;
+            Stack<argType> stack;
+            Status status;
+        };
 
         Processor(){
-            _registers = new int[5];
-            _stack = new Stack<argType>{};
-            _status = Status::NOT_STARTED;
+            _processorState.registers = new int[5];
+            _processorState.stack = Stack<argType>{};
+            _processorState.status = Status::NOT_STARTED;
         };
 
         ~Processor() = default;
+
+        ProcessorState* getState() {
+            return &_processorState;
+        }
+
+    private:
+
+        ProcessorState _processorState{};
 
     };
 

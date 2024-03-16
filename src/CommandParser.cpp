@@ -15,9 +15,9 @@ namespace processorEmulator::CommandParser {
         return std::make_shared<T>(T());
     }
 
-    CommandParser::LineParser::LineParser(std::string programPath, const char *objectRegex) {
+    CommandParser::LineParser::LineParser(std::string programPath, std::string objectRegex) {
         _programPath = std::move(programPath);
-        _objectRegex = objectRegex;
+        _objectRegex = std::move(objectRegex);
 
         _commandVector = {_<Commands::Begin>, _<Commands::End>, _<Commands::Push>, _<Commands::Pop>, _<Commands::PushR>,
                           _<Commands::PopR>, _<Commands::Add>, _<Commands::Sub>, _<Commands::Mul>, _<Commands::Div>,
@@ -26,7 +26,7 @@ namespace processorEmulator::CommandParser {
 
     std::vector<std::shared_ptr<Commands::BaseCommand>> LineParser::getCommandVector() {
         std::ifstream file(_programPath);
-        if (file.bad())
+        if (!file.is_open())
             throw ParserException("Invalid Path");
         std::vector<std::shared_ptr<Commands::BaseCommand>> result;
 

@@ -25,8 +25,8 @@ set(SRC
         src/CommandParser.cpp
         src/Commands.cpp
         main.cpp
-        src/StartProgram.h
-        src/StartProgram.cpp
+        src/Starter.h
+        src/Starter.cpp
 )
 
 add_library(${PROJECT_NAME} ${SRC})

@@ -6,79 +6,72 @@
 
 namespace processorEmulator {
 
-    Processor &processor = Processor::instance();
-
-    void Commands::Begin::execute() {
-        Processor::instance().setStatus(Processor::Status::RUNNING);
+    void Commands::Begin::execute(Processor::ProcessorState* processorState) {
+        processorState->status =  Processor::Status::RUNNING;
     }
 
-    void Commands::End::execute() {
-        processor.setStatus(Processor::Status::ENDED);
+    void Commands::End::execute(Processor::ProcessorState* processorState) {
+        processorState->status =  Processor::Status::ENDED;
     }
 
-    void Commands::Push::execute() {
-        if (processor.isRunning())
-            processor.getStack()->push(_value);
+    void Commands::Push::execute(Processor::ProcessorState* processorState) {
+        if (processorState->status == Processor::Status::RUNNING)
+            processorState->stack.push(_value);
     }
 
-    void Commands::Pop::execute() {
-        if (processor.isRunning())
-            processor.getStack()->pop();
+    void Commands::Pop::execute(Processor::ProcessorState* processorState) {
+        if (processorState->status == Processor::Status::RUNNING)
+            processorState->stack.pop();
     }
 
-    void Commands::PushR::execute() {
-        if (processor.isRunning())
-            processor.getStack()->push(processor.getRegisters()[static_cast<int>(_reg)]);
+    void Commands::PushR::execute(Processor::ProcessorState* processorState) {
+        if (processorState->status == Processor::Status::RUNNING)
+            processorState->stack.push(processorState->registers[static_cast<int>(_reg)]);
     }
 
-    void Commands::PopR::execute() {
-        if (processor.isRunning())
-            processor.getRegisters()[static_cast<int>(_reg)] = processor.getStack()->pop();
+    void Commands::PopR::execute(Processor::ProcessorState* processorState) {
+        if (processorState->status == Processor::Status::RUNNING)
+            processorState->registers[static_cast<int>(_reg)] = processorState->stack.pop();
     }
 
-    void Commands::Add::execute() {
-        if (processor.isRunning()) {
-            Stack<argType>* stack = processor.getStack();
-            argType sum = stack->pop() + stack->pop();
-            stack->push(sum);
+    void Commands::Add::execute(Processor::ProcessorState* processorState) {
+        if (processorState->status == Processor::Status::RUNNING) {
+            processorState->stack.push(processorState->stack.pop() + processorState->stack.pop());
         }
     }
 
-    void Commands::Sub::execute() {
-        if (processor.isRunning()) {
-            Stack<argType>* stack = processor.getStack();
-            argType sub = stack->pop() - stack->pop();
-            stack->push(sub);
+    void Commands::Sub::execute(Processor::ProcessorState* processorState) {
+        if (processorState->status == Processor::Status::RUNNING) {
+            processorState->stack.push(processorState->stack.pop() - processorState->stack.pop());
+
         }
     }
 
-    void Commands::Mul::execute() {
-        if (processor.isRunning()) {
-            Stack<argType>* stack = processor.getStack();
-            argType mul = stack->pop() * stack->pop();
-            stack->push(mul);
+    void Commands::Mul::execute(Processor::ProcessorState* processorState) {
+        if (processorState->status == Processor::Status::RUNNING) {
+            processorState->stack.push(processorState->stack.pop() * processorState->stack.pop());
+
         }
     }
 
-    void Commands::Div::execute() {
-        if (processor.isRunning()) {
-            Stack<argType>* stack = processor.getStack();
-            argType div = stack->pop() / stack->pop();
-            stack->push(div);
+    void Commands::Div::execute(Processor::ProcessorState* processorState) {
+        if (processorState->status == Processor::Status::RUNNING) {
+            processorState->stack.push(processorState->stack.pop() / processorState->stack.pop());
+
         }
     }
 
-    void Commands::In::execute() {
-        if (processor.isRunning()) {
+    void Commands::In::execute(Processor::ProcessorState* processorState) {
+        if (processorState->status == Processor::Status::RUNNING) {
             argType input;
             std::cin >> input;
-            processor.getStack()->push(input);
+            processorState->stack.push(input);
         }
     }
 
-    void Commands::Out::execute() {
-        if (processor.isRunning())
-            std::cout << processor.getStack()->getTop() << std::endl;
+    void Commands::Out::execute(Processor::ProcessorState* processorState) {
+        if (processorState->status == Processor::Status::RUNNING)
+            std::cout << processorState->stack.getTop() << std::endl;
     }
 
     void Commands::RegisterCommand::setArgFromRegex(const std::smatch &match, int numOfLine) {

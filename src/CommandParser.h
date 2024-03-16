@@ -30,7 +30,7 @@ namespace processorEmulator::CommandParser {
     class LineParser {
 
     public:
-        explicit LineParser(std::string programPath, const char *objectRegex = "([+-]?[1-9]*[0-9]*)");
+        explicit LineParser(std::string programPath, std::string objectRegex = "([+-]?[1-9]*[0-9]*)");
 
         std::vector<std::shared_ptr<Commands::BaseCommand>> getCommandVector();
 
