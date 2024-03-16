@@ -12,7 +12,7 @@ namespace processorEmulator {
     using argType = int;
 
     enum class Register : int {
-        AX, BX, CX, DX
+        AX, BX, CX, DX, BP
     };
 
     class Processor {
@@ -35,8 +35,6 @@ namespace processorEmulator {
 
         static Processor &instance();
 
-        void init();
-
         void execute(std::string programPath);
 
         void setStatus(Status newStatus) { _status = newStatus; }
@@ -54,10 +52,11 @@ namespace processorEmulator {
 
         argType* _registers;
         Stack<argType>* _stack;
+
         Status _status;
 
         Processor(){
-            _registers = new int[4];
+            _registers = new int[5];
             _stack = new Stack<argType>{};
             _status = Status::NOT_STARTED;
         };

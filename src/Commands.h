@@ -2,6 +2,7 @@
 #define PROCESSOREMULATOR_COMMANDS_H
 
 #include <regex>
+#include <utility>
 
 #include "ProcessorEmulator.h"
 
@@ -12,15 +13,23 @@ namespace processorEmulator::Commands {
 
     public:
 
+        explicit BaseCommand(std::string parseName = "BASE_COMMAND") : _parseName(std::move(parseName)) {};
+
         virtual void execute() {};
 
         virtual void setArgFromRegex(const std::smatch &match, int numOfLine) {};
 
+    private:
+
+        std::string _parseName;
+
     };
-    
+
     class Begin : public BaseCommand {
 
     public:
+
+        explicit Begin(std::string parseName = "BEGIN") : BaseCommand(std::move(parseName)) {};
 
         void execute() override;
 
@@ -30,6 +39,8 @@ namespace processorEmulator::Commands {
 
     public:
 
+        explicit End(std::string parseName = "END") : BaseCommand(std::move(parseName)) {};
+
         void execute() override;
 
     };
@@ -38,7 +49,8 @@ namespace processorEmulator::Commands {
 
     public:
 
-        UserArgCommand() = default;
+        explicit UserArgCommand(std::string parseName, argType value = 0) : BaseCommand(
+                std::move(parseName)) { _value = value; };
 
         void execute() override = 0;
 
@@ -54,6 +66,9 @@ namespace processorEmulator::Commands {
 
     public:
 
+        explicit Push(std::string parseName = "PUSH", argType value = 0) : UserArgCommand(std::move(parseName),
+                                                                                          value) {};
+
         void execute() override;
 
     };
@@ -61,6 +76,8 @@ namespace processorEmulator::Commands {
     class Pop : public BaseCommand {
 
     public:
+
+        explicit Pop(std::string parseName = "POP") : BaseCommand(std::move(parseName)) {};
 
         void execute() override;
 
@@ -70,7 +87,8 @@ namespace processorEmulator::Commands {
 
     public:
 
-        RegisterCommand() { _reg = Register::AX; };
+        explicit RegisterCommand(std::string parseName = "REGISTER", Register reg = Register::AX) : BaseCommand(
+                std::move(parseName)) { _reg = reg; };
 
         void execute() override = 0;
 
@@ -86,6 +104,8 @@ namespace processorEmulator::Commands {
 
     public:
 
+        explicit PushR(std::string parseName = "PUSHR") : RegisterCommand(std::move(parseName)) {};
+
         void execute() override;
 
     };
@@ -93,6 +113,8 @@ namespace processorEmulator::Commands {
     class PopR : public RegisterCommand {
 
     public:
+
+        explicit PopR(std::string parseName = "POPR") : RegisterCommand(std::move(parseName)) {};
 
         void execute() override;
 
@@ -102,6 +124,8 @@ namespace processorEmulator::Commands {
 
     public:
 
+        explicit Add(std::string parseName = "ADD") : BaseCommand(std::move(parseName)) {};
+
         void execute() override;
 
     };
@@ -109,6 +133,8 @@ namespace processorEmulator::Commands {
     class Sub : public BaseCommand {
 
     public:
+
+        explicit Sub(std::string parseName = "SUB") : BaseCommand(std::move(parseName)) {};
 
         void execute() override;
 
@@ -118,6 +144,8 @@ namespace processorEmulator::Commands {
 
     public:
 
+        explicit Mul(std::string parseName = "MUL") : BaseCommand(std::move(parseName)) {};
+
         void execute() override;
 
     };
@@ -125,6 +153,8 @@ namespace processorEmulator::Commands {
     class Div : public BaseCommand {
 
     public:
+
+        explicit Div(std::string parseName = "DIV") : BaseCommand(std::move(parseName)) {};
 
         void execute() override;
 
@@ -134,6 +164,8 @@ namespace processorEmulator::Commands {
 
     public:
 
+        explicit In(std::string parseName = "IN") : BaseCommand(std::move(parseName)) {};
+
         void execute() override;
 
     };
@@ -141,6 +173,8 @@ namespace processorEmulator::Commands {
     class Out : public BaseCommand {
 
     public:
+
+        explicit Out(std::string parseName = "OUT") : BaseCommand(std::move(parseName)) {};
 
         void execute() override;
 

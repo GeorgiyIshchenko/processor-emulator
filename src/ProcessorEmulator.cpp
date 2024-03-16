@@ -21,12 +21,6 @@ namespace processorEmulator {
             command->execute();
         }
     }
-
-    void Processor::init() {
-
-
-    }
-
 }
 
 
