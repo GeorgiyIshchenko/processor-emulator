@@ -9,6 +9,9 @@
 namespace processorEmulator {
 
 
+    void Processor::execute() {
+
+    }
 }
 
 

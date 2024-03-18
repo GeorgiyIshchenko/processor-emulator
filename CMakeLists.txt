@@ -27,6 +27,7 @@ set(SRC
         main.cpp
         src/Starter.h
         src/Starter.cpp
+        src/ProcessorState.h
 )
 
 add_library(${PROJECT_NAME} ${SRC})

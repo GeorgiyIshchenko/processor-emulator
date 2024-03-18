@@ -13,8 +13,8 @@ namespace processorEmulator {
 
     void Starter::doit() {
         try{
-            Processor processor{};
             auto commands = CommandParser::LineParser(_programPath, _objectRegex).getCommandVector();
+            Processor processor{commands};
             for (const auto& command: commands) {
                 command->execute(processor.getState());
             }

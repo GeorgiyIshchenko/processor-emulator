@@ -2,39 +2,21 @@
 #define PROCESSOREMULATOR_H
 
 #include <vector>
-#include <map>
 
-#include "Stack.h"
-
+#include "Commands.h"
 
 namespace processorEmulator {
-
-    using argType = int;
-
-    enum class Register : int {
-        AX, BX, CX, DX, BP
-    };
 
     class Processor {
 
     public:
 
-        enum class Status {
-            NOT_STARTED,
-            RUNNING,
-            ENDED
-        };
-
-        struct ProcessorState {
-            argType* registers;
-            Stack<argType> stack;
-            Status status;
-        };
-
-        Processor(){
+        explicit Processor(const std::vector<std::shared_ptr<Commands::BaseCommand>>& commands){
             _processorState.registers = new int[5];
             _processorState.stack = Stack<argType>{};
             _processorState.status = Status::NOT_STARTED;
+            _processorState.commands = commands;
+            _processorState.head = commands.cbegin();
         };
 
         ~Processor() = default;
@@ -42,6 +24,8 @@ namespace processorEmulator {
         ProcessorState* getState() {
             return &_processorState;
         }
+
+        void execute();
 
     private:
 
