@@ -279,6 +279,26 @@ namespace processorEmulator::Commands {
 
     };
 
+    class Call : public LabelCommand {
+
+    public:
+
+        explicit Call(std::string parseName = "CALL") : LabelCommand(std::move(parseName)) {};
+
+        void execute(ProcessorState *processorState) override;
+
+    };
+
+    class Ret : public BaseCommand {
+
+    public:
+
+        explicit Ret(std::string parseName = "RET") : BaseCommand(std::move(parseName)) {};
+
+        void execute(ProcessorState *processorState) override;
+
+    };
+
 }
 
 

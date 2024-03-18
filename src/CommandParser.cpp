@@ -23,7 +23,8 @@ namespace processorEmulator::CommandParser {
         _generatorVector = {_<Commands::Begin>, _<Commands::End>, _<Commands::Push>, _<Commands::Pop>,
                             _<Commands::PushR>, _<Commands::PopR>, _<Commands::Add>, _<Commands::Sub>, _<Commands::Mul>,
                             _<Commands::Div>, _<Commands::In>, _<Commands::Out>, _<Commands::Jmp>, _<Commands::Jeq>,
-                            _<Commands::Jne>, _<Commands::Ja>, _<Commands::Jae>, _<Commands::Jb>, _<Commands::Jbe>};
+                            _<Commands::Jne>, _<Commands::Ja>, _<Commands::Jae>, _<Commands::Jb>, _<Commands::Jbe>,
+                            _<Commands::Call>, _<Commands::Ret>};
         _commandVector = {};
         _labelsMap = {};
     }

@@ -143,6 +143,15 @@ namespace processorEmulator {
         }
     }
 
+    void Commands::Call::execute(ProcessorState *processorState) {
+        LabelCommand::execute(processorState);
+    }
+
+    void Commands::Ret::execute(ProcessorState *processorState) {
+        BaseCommand::execute(processorState);
+    }
+
+
     void checkArguments(const std::smatch &match, int numOfLine) {
         if (match.length() < 3) {
             auto *errorString =
@@ -194,4 +203,5 @@ namespace processorEmulator {
     std::string Commands::LabelCommand::getStringForRegex() {
         return "(" + _parseName + "\\b)\\ ([^\\s]+)";
     }
+    
 }
