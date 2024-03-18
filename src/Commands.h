@@ -195,7 +195,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit LabelCommand(std::string parseName = "LabelCommand") : BaseCommand(std::move(parseName)) {};
+        explicit LabelCommand(std::string parseName = "LABEL") : BaseCommand(std::move(parseName)) {};
 
         void execute(ProcessorState* processorState) override = 0;
 
@@ -206,6 +206,62 @@ namespace processorEmulator::Commands {
     protected:
 
         std::string _label;
+
+    };
+
+    class Jmp: public LabelCommand {
+
+        explicit Jmp(std::string parseName = "JMP"): LabelCommand(std::move(parseName)) {};
+
+        void execute(ProcessorState* processorState) override;
+
+    };
+
+    class Jeq: public LabelCommand {
+
+        explicit Jeq(std::string parseName = "JEQ"): LabelCommand(std::move(parseName)) {};
+
+        void execute(ProcessorState* processorState) override;
+
+    };
+
+    class Jne: public LabelCommand {
+
+        explicit Jne(std::string parseName = "JNE"): LabelCommand(std::move(parseName)) {};
+
+        void execute(ProcessorState* processorState) override;
+
+    };
+
+    class Ja: public LabelCommand {
+
+        explicit Ja(std::string parseName = "JA"): LabelCommand(std::move(parseName)) {};
+
+        void execute(ProcessorState* processorState) override;
+
+    };
+
+    class Jae: public LabelCommand {
+
+        explicit Jae(std::string parseName = "JAE"): LabelCommand(std::move(parseName)) {};
+
+        void execute(ProcessorState* processorState) override;
+
+    };
+
+    class Jb: public LabelCommand {
+
+        explicit Jb(std::string parseName = "JB"): LabelCommand(std::move(parseName)) {};
+
+        void execute(ProcessorState* processorState) override;
+
+    };
+
+    class Jbe: public LabelCommand {
+
+        explicit Jbe(std::string parseName = "JBE"): LabelCommand(std::move(parseName)) {};
+
+        void execute(ProcessorState* processorState) override;
 
     };
 
