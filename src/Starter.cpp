@@ -1,23 +1,24 @@
 #include "Starter.h"
 
-#include <utility>
+#include "ProcessorEmulator.h"
 #include "CommandParser.h"
-#include "Commands.h"
+#include "Exceptions.h"
 
 namespace processorEmulator {
 
-    Starter::Starter(std::string programPath, std::string objectRegex) {
-        _programPath = std::move(programPath);
-        _objectRegex = std::move(objectRegex);
+    Starter::Starter(const std::string& programPath, const std::string& objectRegex) {
+        _programPath = programPath;
+        _objectRegex = objectRegex;
     }
 
     void Starter::doit() {
         try{
-            auto commands = CommandParser::LineParser(_programPath, _objectRegex).getCommandVector();
-            Processor processor{commands};
-            for (const auto& command: commands) {
-                command->execute(processor.getState());
-            }
+            auto parser = CommandParser::LineParser(_programPath, _objectRegex);
+            parser.parse();
+            auto commands = parser.getCommands();
+            auto labels = parser.getLabels();
+            Processor processor{commands, labels};
+            processor.execute();
         }
         catch (CommandParser::ParserException& e){
             std::cout << e.what() << std::endl;

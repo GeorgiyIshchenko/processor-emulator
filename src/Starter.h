@@ -6,11 +6,11 @@
 
 namespace processorEmulator {
 
-    class Starter final {
+    class Starter {
 
     public:
 
-        explicit Starter(std::string programPath, std::string objectRegex = "([+-]?[1-9]*[0-9]*)");
+        explicit Starter(const std::string& programPath, const std::string& objectRegex = "([+-]?[1-9]*[0-9]*)");
 
         void doit();
 

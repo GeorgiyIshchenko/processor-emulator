@@ -4,8 +4,9 @@
 
 #include <fstream>
 
-#include <Commands.h>
-#include <CommandParser.h>
+#include "Commands.h"
+#include "CommandParser.h"
+#include "Exceptions.h"
 
 
 namespace processorEmulator::CommandParser {
@@ -19,44 +20,60 @@ namespace processorEmulator::CommandParser {
         _programPath = std::move(programPath);
         _objectRegex = std::move(objectRegex);
 
-        _commandVector = {_<Commands::Begin>, _<Commands::End>, _<Commands::Push>, _<Commands::Pop>, _<Commands::PushR>,
-                          _<Commands::PopR>, _<Commands::Add>, _<Commands::Sub>, _<Commands::Mul>, _<Commands::Div>,
-                          _<Commands::In>, _<Commands::Out>};
+        _generatorVector = {_<Commands::Begin>, _<Commands::End>, _<Commands::Push>, _<Commands::Pop>,
+                            _<Commands::PushR>, _<Commands::PopR>, _<Commands::Add>, _<Commands::Sub>, _<Commands::Mul>,
+                            _<Commands::Div>, _<Commands::In>, _<Commands::Out>, _<Commands::Jmp>, _<Commands::Jeq>,
+                            _<Commands::Jne>, _<Commands::Ja>, _<Commands::Jae>, _<Commands::Jb>, _<Commands::Jbe>};
+        _commandVector = {};
+        _labelsMap = {};
     }
 
-    std::vector<std::shared_ptr<Commands::BaseCommand>> LineParser::getCommandVector() {
+    void LineParser::parse() {
         std::ifstream file(_programPath);
         if (!file.is_open())
             throw ParserException("Invalid Path");
-        std::vector<std::shared_ptr<Commands::BaseCommand>> result{};
 
-        std::smatch last_match{};
+        std::smatch lastMatch{};
 
         std::string line;
-        int numOfLine = 1;
-        bool isInvalidCommand;
+        int lineIdx = 0;
+        size_t commandIdx = 0;
 
         while (std::getline(file, line)) {
+            lineIdx++;
+
             if (line.empty()) continue;
-            isInvalidCommand = true;
-            for (const auto &commandGenerator: _commandVector) {
+
+            std::regex_search(line.cbegin(), line.cend(), lastMatch, std::regex("(#[^\\*]*)"));
+            if (!lastMatch.empty()) continue;
+
+            std::regex_search(line.cbegin(), line.cend(), lastMatch, std::regex("([^\\s]+:)"));
+            if (!lastMatch.empty()) {
+                std::string label = lastMatch[1].str();
+                _labelsMap.emplace(label.substr(0, label.length() - 1), commandIdx);
+                continue;
+            }
+
+            bool isInvalidCommand = true;
+            for (const auto &commandGenerator: _generatorVector) {
                 auto command = commandGenerator();
-                std::regex_search(line.cbegin(), line.cend(), last_match, std::regex(command->getStringForRegex()));
-                if (!last_match.empty()) {
-                    command->setArgFromRegex(last_match, numOfLine);
-                    result.push_back(command);
+                std::regex_search(line.cbegin(), line.cend(), lastMatch,
+                                  std::regex(command->getStringForRegex(), std::regex::icase));
+                if (!lastMatch.empty()) {
+                    command->setArgFromRegex(lastMatch, lineIdx);
+                    _commandVector.push_back(command);
+                    commandIdx++;
                     isInvalidCommand = false;
                     break;
                 }
             }
+
             if (isInvalidCommand) {
                 auto errorMessage = new std::string("Invalid Command");
-                throw ParserException(errorMessage->c_str(), numOfLine);
+                throw ParserException(errorMessage->c_str(), lineIdx);
             }
-            numOfLine++;
         }
         file.close();
-        return result;
     }
 
 }

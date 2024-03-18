@@ -1,6 +1,7 @@
-BEGIN
-PUSH 2
-PUSH 3
-ADD
-OUT
-END
+begin
+push 2
+push 3
+#test comment
+add
+out
+end

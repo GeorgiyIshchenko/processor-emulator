@@ -1,16 +1,13 @@
-#include <memory>
-#include <utility>
-
 #include "ProcessorEmulator.h"
 #include "Commands.h"
-#include "CommandParser.h"
-
 
 namespace processorEmulator {
 
-
     void Processor::execute() {
-
+        while (_processorState.status != Status::ENDED) {
+            _processorState.head->get()->execute(&_processorState);
+            _processorState.head++;
+        }
     }
 }
 

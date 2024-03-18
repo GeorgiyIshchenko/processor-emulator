@@ -3,15 +3,22 @@
 
 #include <Starter.h>
 
-using namespace processorEmulator;
 
-TEST(Operation, Emul){
-    Starter starter{"../tests/test_program"};
+TEST(Operation, Test){
+    auto path = "../tests/test_program";
+    processorEmulator::Starter starter{path, "([+-]?[1-9]*[0-9]*)"};
     starter.doit();
 }
 
 TEST(Operation, Fibonachi){
-    Starter starter{"../tests/fibonachi"};
+    auto path = "../tests/fibonachi";
+    processorEmulator::Starter starter{path};
+    starter.doit();
+}
+
+TEST(Operation, Factorial){
+    auto path = "../tests/factorial";
+    processorEmulator::Starter starter{path};
     starter.doit();
 }
 

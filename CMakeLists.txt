@@ -24,10 +24,10 @@ set(SRC
         src/Commands.h
         src/CommandParser.cpp
         src/Commands.cpp
-        main.cpp
         src/Starter.h
         src/Starter.cpp
         src/ProcessorState.h
+        src/Exceptions.h
 )
 
 add_library(${PROJECT_NAME} ${SRC})

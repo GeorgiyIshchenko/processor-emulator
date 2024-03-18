@@ -1,0 +1,30 @@
+begin
+in
+
+popr dx
+push 0
+popr ax
+push 1
+popr bx
+
+while:
+
+    # тут мы вынесли число из регситра прибавили к нему единицу и сейчас будем умножать
+    pushr ax
+    push 1
+    add
+    popr ax
+
+    # тут мы умножим число на то что лежит в bx
+    pushr ax
+    pushr bx
+    mul
+    popr bx
+
+    pushr ax
+    pushr dx
+    ja while
+pushr bx
+
+out
+end

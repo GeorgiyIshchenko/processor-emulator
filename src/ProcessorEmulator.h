@@ -11,12 +11,14 @@ namespace processorEmulator {
 
     public:
 
-        explicit Processor(const std::vector<std::shared_ptr<Commands::BaseCommand>>& commands){
+        explicit Processor(const std::vector<std::shared_ptr<Commands::BaseCommand>>& commands,
+                           const std::map<std::string, size_t>& labels){
             _processorState.registers = new int[5];
             _processorState.stack = Stack<argType>{};
             _processorState.status = Status::NOT_STARTED;
             _processorState.commands = commands;
             _processorState.head = commands.cbegin();
+            _processorState.labels = labels;
         };
 
         ~Processor() = default;
