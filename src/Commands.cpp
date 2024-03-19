@@ -1,5 +1,6 @@
 #include <iostream>
 #include <regex>
+#include <unordered_map>
 
 #include "Commands.h"
 #include "CommandParser.h"
@@ -89,20 +90,20 @@ namespace processorEmulator {
         return result;
     }
 
-    void jump(ProcessorState &processorState, const std::string &label) {
+    void jump(ProcessorState &processorState, size_t label) {
         processorState.head = processorState.commands.cbegin() + processorState.labels[label];
     }
 
     void Commands::Jmp::execute(ProcessorState &processorState) {
         if (processorState.isRunning())
-            jump(processorState, _label);
+            jump(processorState, _labelHash);
     }
 
     void Commands::Jeq::execute(ProcessorState &processorState) {
         if (processorState.isRunning()) {
             DoubleTop top = getTwoTopValues(&processorState.stack);
             if (top.lower == top.higher)
-                jump(processorState, _label);
+                jump(processorState, _labelHash);
         }
     }
 
@@ -110,7 +111,7 @@ namespace processorEmulator {
         if (processorState.isRunning()) {
             DoubleTop top = getTwoTopValues(&processorState.stack);
             if (top.lower != top.higher)
-                jump(processorState, _label);
+                jump(processorState, _labelHash);
         }
     }
 
@@ -118,7 +119,7 @@ namespace processorEmulator {
         if (processorState.isRunning()) {
             DoubleTop top = getTwoTopValues(&processorState.stack);
             if (top.lower < top.higher)
-                jump(processorState, _label);
+                jump(processorState, _labelHash);
         }
     }
 
@@ -126,7 +127,7 @@ namespace processorEmulator {
         if (processorState.isRunning()) {
             DoubleTop top = getTwoTopValues(&processorState.stack);
             if (top.lower <= top.higher)
-                jump(processorState, _label);
+                jump(processorState, _labelHash);
         }
     }
 
@@ -134,7 +135,7 @@ namespace processorEmulator {
         if (processorState.isRunning()) {
             DoubleTop top = getTwoTopValues(&processorState.stack);
             if (top.lower > top.higher)
-                jump(processorState, _label);
+                jump(processorState, _labelHash);
         }
     }
 
@@ -142,14 +143,16 @@ namespace processorEmulator {
         if (processorState.isRunning()) {
             DoubleTop top = getTwoTopValues(&processorState.stack);
             if (top.lower >= top.higher)
-                jump(processorState, _label);
+                jump(processorState, _labelHash);
         }
     }
 
     void Commands::Call::execute(ProcessorState &processorState) {
         if (processorState.isRunning()) {
-            processorState.callStack.push(std::make_pair(std::distance(processorState.commands.cbegin(), processorState.head), processorState.stack.getSize()));
-            jump(processorState, _label);
+            processorState.callStack.push(
+                    std::make_pair(std::distance(processorState.commands.cbegin(), processorState.head),
+                                   processorState.stack.getSize()));
+            jump(processorState, _labelHash);
         }
     }
 
@@ -164,8 +167,7 @@ namespace processorEmulator {
 
     void checkArguments(const std::smatch &match, int numOfLine) {
         if (match.length() < 3) {
-            auto *errorString =
-                    new std::string("Not enough arguments");
+            auto *errorString = new std::string("Not enough arguments");
             throw CommandParser::ParserException(errorString->c_str(), numOfLine);
         }
     }
@@ -195,7 +197,8 @@ namespace processorEmulator {
 
     void Commands::LabelCommand::setArgFromRegex(const std::smatch &match, int numOfLine) {
         checkArguments(match, numOfLine);
-        _label = match[2].str();
+        std::hash<std::string> hashMaker;
+        _labelHash = hashMaker(match[2].str());
     }
 
     std::string Commands::BaseCommand::getStringForRegex() {
@@ -213,5 +216,5 @@ namespace processorEmulator {
     std::string Commands::LabelCommand::getStringForRegex() {
         return "(" + _parseName + "\\b)\\ ([^\\s]+)";
     }
-    
+
 }

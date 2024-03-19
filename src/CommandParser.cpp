@@ -1,7 +1,7 @@
 #include <utility>
 #include <vector>
 #include <string>
-
+#include <unordered_map>
 #include <fstream>
 
 #include "Commands.h"
@@ -12,19 +12,38 @@
 namespace processorEmulator::CommandParser {
 
     template<class T>
-    std::shared_ptr<T> _() {
+    std::shared_ptr<T> objectGenerator() {
         return std::make_shared<T>(T());
     }
+
+    std::vector<std::function<std::shared_ptr<Commands::BaseCommand>()>> LineParser::_generatorVector = {
+            objectGenerator<Commands::Begin>,
+            objectGenerator<Commands::End>,
+            objectGenerator<Commands::Push>,
+            objectGenerator<Commands::Pop>,
+            objectGenerator<Commands::PushR>,
+            objectGenerator<Commands::PopR>,
+            objectGenerator<Commands::Add>,
+            objectGenerator<Commands::Sub>,
+            objectGenerator<Commands::Mul>,
+            objectGenerator<Commands::Div>,
+            objectGenerator<Commands::In>,
+            objectGenerator<Commands::Out>,
+            objectGenerator<Commands::Jmp>,
+            objectGenerator<Commands::Jeq>,
+            objectGenerator<Commands::Jne>,
+            objectGenerator<Commands::Ja>,
+            objectGenerator<Commands::Jae>,
+            objectGenerator<Commands::Jb>,
+            objectGenerator<Commands::Jbe>,
+            objectGenerator<Commands::Call>,
+            objectGenerator<Commands::Ret>,
+            objectGenerator<Commands::LabelCommand>,
+            objectGenerator<Commands::BaseCommand>};
 
     CommandParser::LineParser::LineParser(std::string programPath, std::string objectRegex) {
         _programPath = std::move(programPath);
         _objectRegex = std::move(objectRegex);
-
-        _generatorVector = {_<Commands::Begin>, _<Commands::End>, _<Commands::Push>, _<Commands::Pop>,
-                            _<Commands::PushR>, _<Commands::PopR>, _<Commands::Add>, _<Commands::Sub>, _<Commands::Mul>,
-                            _<Commands::Div>, _<Commands::In>, _<Commands::Out>, _<Commands::Jmp>, _<Commands::Jeq>,
-                            _<Commands::Jne>, _<Commands::Ja>, _<Commands::Jae>, _<Commands::Jb>, _<Commands::Jbe>,
-                            _<Commands::Call>, _<Commands::Ret> };
         _commandVector = {};
         _labelsMap = {};
     }
@@ -39,6 +58,8 @@ namespace processorEmulator::CommandParser {
         std::string line;
         int lineIdx = 0;
         size_t commandIdx = 0;
+        std::hash<std::string> hashMaker;
+
 
         while (std::getline(file, line)) {
             lineIdx++;
@@ -51,8 +72,8 @@ namespace processorEmulator::CommandParser {
             std::regex_search(line.cbegin(), line.cend(), lastMatch, std::regex("([^\\s]+:)"));
             if (!lastMatch.empty()) {
                 std::string label = lastMatch[1].str();
-                _labelsMap.emplace(label.substr(0, label.length() - 1), commandIdx);
-                _commandVector.push_back(_<Commands::LabelCommand>());
+                _labelsMap.emplace(hashMaker(label.substr(0, label.length() - 1)), commandIdx);
+                _commandVector.push_back(objectGenerator<Commands::LabelCommand>());
                 commandIdx++;
                 continue;
             }

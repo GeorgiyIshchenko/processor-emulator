@@ -9,23 +9,59 @@
 namespace processorEmulator::Commands {
 
 
+    enum class Code : char {
+        Begin,
+        End,
+        Push,
+        Pop,
+        Pushr,
+        Popr,
+        Add,
+        Sub,
+        Mul,
+        Div,
+        Out,
+        In,
+        Jmp,
+        Jeq,
+        Jne,
+        Ja,
+        Jae,
+        Jb,
+        Jbe,
+        Call,
+        Ret,
+        Label,
+        Base
+    };
+
+
     class BaseCommand {
 
     public:
 
-        explicit BaseCommand(std::string parseName = "BASE_COMMAND") : _parseName(std::move(parseName)) {};
+        explicit BaseCommand(std::string parseName = "BASE_COMMAND", Code code = Code::Base) : _parseName(
+                std::move(parseName)), _code(code) {};
 
         virtual void execute(ProcessorState &processorState) {};
 
         virtual void setArgFromRegex(const std::smatch &match, int numOfLine) {};
 
+        virtual void setArg(size_t arg) {};
+
         virtual std::string getStringForRegex();
 
         virtual void printCommandName(ProcessorState &processorState);
 
+        virtual Code getCode() { return _code; };
+
+        virtual size_t getArgument() { return 0; };
+
     protected:
 
         std::string _parseName;
+
+        Code _code;
 
     };
 
@@ -33,7 +69,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit Begin(std::string parseName = "BEGIN") : BaseCommand(std::move(parseName)) {};
+        explicit Begin(std::string parseName = "BEGIN") : BaseCommand(std::move(parseName), Code::Begin) {};
 
         void execute(ProcessorState &processorState) override;
 
@@ -43,7 +79,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit End(std::string parseName = "END") : BaseCommand(std::move(parseName)) {};
+        explicit End(std::string parseName = "END") : BaseCommand(std::move(parseName), Code::End) {};
 
         void execute(ProcessorState &processorState) override;
 
@@ -53,8 +89,9 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit UserArgCommand(std::string parseName, std::string objectRegex, argType value = 0) :
-                BaseCommand(std::move(parseName)) {
+        explicit UserArgCommand(std::string parseName, std::string objectRegex, argType value = 0,
+                                Code code = Code::Base) :
+                BaseCommand(std::move(parseName), code) {
             _value = value;
             _objectRegex = std::move(objectRegex);
         };
@@ -63,7 +100,11 @@ namespace processorEmulator::Commands {
 
         void setArgFromRegex(const std::smatch &match, int numOfLine) override;
 
+        void setArg(size_t arg) override { _value = static_cast<argType>(arg); };
+
         std::string getStringForRegex() override;
+
+        size_t getArgument() override { return _value; };
 
     protected:
 
@@ -78,7 +119,7 @@ namespace processorEmulator::Commands {
     public:
 
         explicit Push(std::string parseName = "PUSH", std::string objectRegex = "([+-]?[1-9]*[0-9]*)",
-                      argType value = 0) : UserArgCommand(std::move(parseName), std::move(objectRegex), value) {};
+                      argType value = 0) : UserArgCommand(std::move(parseName), std::move(objectRegex), value, Code::Push) {};
 
         void execute(ProcessorState &processorState) override;
 
@@ -88,7 +129,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit Pop(std::string parseName = "POP") : BaseCommand(std::move(parseName)) {};
+        explicit Pop(std::string parseName = "POP") : BaseCommand(std::move(parseName), Code::Pop) {};
 
         void execute(ProcessorState &processorState) override;
 
@@ -98,14 +139,19 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit RegisterCommand(std::string parseName = "REGISTER", Register reg = Register::AX) : BaseCommand(
-                std::move(parseName)) { _reg = reg; };
+        explicit RegisterCommand(std::string parseName = "REGISTER", Code code = Code::Base, Register reg = Register::AX) : BaseCommand(
+                std::move(parseName), code) { _reg = reg; };
 
         void execute(ProcessorState &processorState) override = 0;
 
         void setArgFromRegex(const std::smatch &match, int numOfLine) override;
 
+        void setArg(size_t arg) override { _reg = static_cast<Register>(arg); };
+
         std::string getStringForRegex() override;
+
+
+        size_t getArgument() override { return static_cast<size_t>(_reg); };
 
     protected:
 
@@ -117,7 +163,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit PushR(std::string parseName = "PUSHR") : RegisterCommand(std::move(parseName)) {};
+        explicit PushR(std::string parseName = "PUSHR") : RegisterCommand(std::move(parseName), Code::Pushr) {};
 
         void execute(ProcessorState &processorState) override;
 
@@ -127,7 +173,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit PopR(std::string parseName = "POPR") : RegisterCommand(std::move(parseName)) {};
+        explicit PopR(std::string parseName = "POPR") : RegisterCommand(std::move(parseName), Code::Popr) {};
 
         void execute(ProcessorState &processorState) override;
 
@@ -137,7 +183,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit Add(std::string parseName = "ADD") : BaseCommand(std::move(parseName)) {};
+        explicit Add(std::string parseName = "ADD") : BaseCommand(std::move(parseName), Code::Add) {};
 
         void execute(ProcessorState &processorState) override;
 
@@ -147,7 +193,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit Sub(std::string parseName = "SUB") : BaseCommand(std::move(parseName)) {};
+        explicit Sub(std::string parseName = "SUB") : BaseCommand(std::move(parseName), Code::Sub) {};
 
         void execute(ProcessorState &processorState) override;
 
@@ -157,7 +203,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit Mul(std::string parseName = "MUL") : BaseCommand(std::move(parseName)) {};
+        explicit Mul(std::string parseName = "MUL") : BaseCommand(std::move(parseName), Code::Mul) {};
 
         void execute(ProcessorState &processorState) override;
 
@@ -167,7 +213,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit Div(std::string parseName = "DIV") : BaseCommand(std::move(parseName)) {};
+        explicit Div(std::string parseName = "DIV") : BaseCommand(std::move(parseName), Code::Div) {};
 
         void execute(ProcessorState &processorState) override;
 
@@ -177,7 +223,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit In(std::string parseName = "IN") : BaseCommand(std::move(parseName)) {};
+        explicit In(std::string parseName = "IN") : BaseCommand(std::move(parseName), Code::In) {};
 
         void execute(ProcessorState &processorState) override;
 
@@ -187,7 +233,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit Out(std::string parseName = "OUT") : BaseCommand(std::move(parseName)) {};
+        explicit Out(std::string parseName = "OUT") : BaseCommand(std::move(parseName), Code::Out) {};
 
         void execute(ProcessorState &processorState) override;
 
@@ -197,17 +243,21 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit LabelCommand(std::string parseName = "LABEL") : BaseCommand(std::move(parseName)) {};
+        explicit LabelCommand(std::string parseName = "LABEL", Code code = Code::Label) : BaseCommand(std::move(parseName), code) {};
 
         void execute(ProcessorState &processorState) override {};
 
         void setArgFromRegex(const std::smatch &match, int numOfLine) override;
 
+        void setArg(size_t arg) override { _labelHash = arg; };
+
         std::string getStringForRegex() override;
+
+        size_t getArgument() override { return _labelHash; };
 
     protected:
 
-        std::string _label;
+        size_t _labelHash;
 
     };
 
@@ -215,7 +265,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit Jmp(std::string parseName = "JMP") : LabelCommand(std::move(parseName)) {};
+        explicit Jmp(std::string parseName = "JMP") : LabelCommand(std::move(parseName), Code::Jmp) {};
 
         void execute(ProcessorState &processorState) override;
 
@@ -225,7 +275,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit Jeq(std::string parseName = "JEQ") : LabelCommand(std::move(parseName)) {};
+        explicit Jeq(std::string parseName = "JEQ") : LabelCommand(std::move(parseName), Code::Jeq) {};
 
         void execute(ProcessorState &processorState) override;
 
@@ -235,7 +285,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit Jne(std::string parseName = "JNE") : LabelCommand(std::move(parseName)) {};
+        explicit Jne(std::string parseName = "JNE") : LabelCommand(std::move(parseName), Code::Jne) {};
 
         void execute(ProcessorState &processorState) override;
 
@@ -245,7 +295,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit Ja(std::string parseName = "JA") : LabelCommand(std::move(parseName)) {};
+        explicit Ja(std::string parseName = "JA") : LabelCommand(std::move(parseName), Code::Ja) {};
 
         void execute(ProcessorState &processorState) override;
 
@@ -255,7 +305,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit Jae(std::string parseName = "JAE") : LabelCommand(std::move(parseName)) {};
+        explicit Jae(std::string parseName = "JAE") : LabelCommand(std::move(parseName), Code::Jae) {};
 
         void execute(ProcessorState &processorState) override;
 
@@ -265,7 +315,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit Jb(std::string parseName = "JB") : LabelCommand(std::move(parseName)) {};
+        explicit Jb(std::string parseName = "JB") : LabelCommand(std::move(parseName), Code::Jb) {};
 
         void execute(ProcessorState &processorState) override;
 
@@ -275,7 +325,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit Jbe(std::string parseName = "JBE") : LabelCommand(std::move(parseName)) {};
+        explicit Jbe(std::string parseName = "JBE") : LabelCommand(std::move(parseName), Code::Jbe) {};
 
         void execute(ProcessorState &processorState) override;
 
@@ -285,7 +335,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit Call(std::string parseName = "CALL") : LabelCommand(std::move(parseName)) {};
+        explicit Call(std::string parseName = "CALL") : LabelCommand(std::move(parseName), Code::Call) {};
 
         void execute(ProcessorState &processorState) override;
 
@@ -295,7 +345,7 @@ namespace processorEmulator::Commands {
 
     public:
 
-        explicit Ret(std::string parseName = "RET") : BaseCommand(std::move(parseName)) {};
+        explicit Ret(std::string parseName = "RET") : BaseCommand(std::move(parseName), Code::Ret) {};
 
         void execute(ProcessorState &processorState) override;
 

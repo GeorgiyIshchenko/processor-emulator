@@ -12,7 +12,9 @@ namespace processorEmulator {
 
         explicit Starter(const std::string& programPath, const std::string& objectRegex = "([+-]?[1-9]*[0-9]*)");
 
-        void doit();
+        void run();
+
+        void runBinary();
 
     private:
 

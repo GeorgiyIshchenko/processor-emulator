@@ -19,16 +19,17 @@ namespace processorEmulator::CommandParser {
 
         std::vector<std::shared_ptr<Commands::BaseCommand>> getCommands() { return _commandVector; }
 
-        std::map<std::string, size_t> getLabels() {return _labelsMap; }
+        std::map<size_t , size_t> getLabels() {return _labelsMap; }
+
+        static std::vector<std::function<std::shared_ptr<Commands::BaseCommand>()>> _generatorVector;
 
 
     private:
 
         std::string _programPath;
         std::string _objectRegex;
-        std::vector<std::function<std::shared_ptr<Commands::BaseCommand>()>> _generatorVector {};
         std::vector<std::shared_ptr<Commands::BaseCommand>> _commandVector;
-        std::map<std::string, size_t> _labelsMap;
+        std::map<size_t, size_t> _labelsMap;
 
     };
 

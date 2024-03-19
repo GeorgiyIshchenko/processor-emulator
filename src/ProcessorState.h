@@ -31,8 +31,8 @@ namespace processorEmulator {
         Status status;
         std::vector<std::shared_ptr<Commands::BaseCommand>> commands;
         std::vector<std::shared_ptr<Commands::BaseCommand>>::const_iterator head;
-        std::map<std::string, size_t> labels;
-        Stack<std::pair<unsigned long, size_t>> callStack;
+        std::map<size_t, size_t> labels;
+        Stack<std::pair<size_t, size_t>> callStack;
 
 
         [[nodiscard]] bool isRunning() const { return status == Status::RUNNING; };

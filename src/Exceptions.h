@@ -24,9 +24,21 @@ namespace processorEmulator {
 
     }
 
-    namespace Commands {
+    namespace BinTool{
 
-        //TODO: Commands Exceptions
+        struct BinToolException : public std::exception {
+
+            explicit BinToolException(const char *message) : message(message) {};
+
+            [[nodiscard]] const char *what() const noexcept override {
+                return (new std::string("Binary Tool Exception: " + std::string(message)))->c_str();
+            }
+
+        private:
+
+            const char *message;
+
+        };
 
     }
 
