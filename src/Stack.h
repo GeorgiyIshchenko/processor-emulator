@@ -102,6 +102,10 @@ namespace processorEmulator {
             return array[size];
         }
 
+        size_t getSize(){
+            return size;
+        }
+
     private:
 
         friend void swap(Stack &s1, Stack &s2) noexcept {

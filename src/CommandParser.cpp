@@ -24,7 +24,7 @@ namespace processorEmulator::CommandParser {
                             _<Commands::PushR>, _<Commands::PopR>, _<Commands::Add>, _<Commands::Sub>, _<Commands::Mul>,
                             _<Commands::Div>, _<Commands::In>, _<Commands::Out>, _<Commands::Jmp>, _<Commands::Jeq>,
                             _<Commands::Jne>, _<Commands::Ja>, _<Commands::Jae>, _<Commands::Jb>, _<Commands::Jbe>,
-                            _<Commands::Call>, _<Commands::Ret>};
+                            _<Commands::Call>, _<Commands::Ret> };
         _commandVector = {};
         _labelsMap = {};
     }
@@ -52,6 +52,8 @@ namespace processorEmulator::CommandParser {
             if (!lastMatch.empty()) {
                 std::string label = lastMatch[1].str();
                 _labelsMap.emplace(label.substr(0, label.length() - 1), commandIdx);
+                _commandVector.push_back(_<Commands::LabelCommand>());
+                commandIdx++;
                 continue;
             }
 

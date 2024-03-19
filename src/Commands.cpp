@@ -7,72 +7,75 @@
 
 namespace processorEmulator {
 
-    void Commands::Begin::execute(ProcessorState *processorState) {
-        processorState->status = Status::RUNNING;
+    void Commands::BaseCommand::printCommandName(ProcessorState &processorState) {
+        if (processorState.isRunning())
+            std::cout << _parseName << std::endl;
     }
 
-    void Commands::End::execute(ProcessorState *processorState) {
-        processorState->status = Status::ENDED;
+    void Commands::Begin::execute(ProcessorState &processorState) {
+        processorState.status = Status::RUNNING;
     }
 
-    void Commands::Push::execute(ProcessorState *processorState) {
-        if (processorState->isRunning())
-            processorState->stack.push(_value);
+    void Commands::End::execute(ProcessorState &processorState) {
+        processorState.status = Status::ENDED;
     }
 
-    void Commands::Pop::execute(ProcessorState *processorState) {
-        if (processorState->isRunning())
-            processorState->stack.pop();
+    void Commands::Push::execute(ProcessorState &processorState) {
+        if (processorState.isRunning())
+            processorState.stack.push(_value);
     }
 
-    void Commands::PushR::execute(ProcessorState *processorState) {
-        if (processorState->isRunning())
-            processorState->stack.push(processorState->registers[static_cast<int>(_reg)]);
+    void Commands::Pop::execute(ProcessorState &processorState) {
+        if (processorState.isRunning())
+            processorState.stack.pop();
     }
 
-    void Commands::PopR::execute(ProcessorState *processorState) {
-        if (processorState->isRunning())
-            processorState->registers[static_cast<int>(_reg)] = processorState->stack.pop();
+    void Commands::PushR::execute(ProcessorState &processorState) {
+        if (processorState.isRunning())
+            processorState.stack.push(processorState.registers[static_cast<int>(_reg)]);
     }
 
-    void Commands::Add::execute(ProcessorState *processorState) {
-        if (processorState->isRunning()) {
-            processorState->stack.push(processorState->stack.pop() + processorState->stack.pop());
+    void Commands::PopR::execute(ProcessorState &processorState) {
+        if (processorState.isRunning())
+            processorState.registers[static_cast<int>(_reg)] = processorState.stack.pop();
+    }
+
+    void Commands::Add::execute(ProcessorState &processorState) {
+        if (processorState.isRunning()) {
+            processorState.stack.push(processorState.stack.pop() + processorState.stack.pop());
         }
     }
 
-    void Commands::Sub::execute(ProcessorState *processorState) {
-        if (processorState->isRunning()) {
-            processorState->stack.push(processorState->stack.pop() - processorState->stack.pop());
+    void Commands::Sub::execute(ProcessorState &processorState) {
+        if (processorState.isRunning()) {
+            processorState.stack.push(processorState.stack.pop() - processorState.stack.pop());
+        }
+    }
+
+    void Commands::Mul::execute(ProcessorState &processorState) {
+        if (processorState.isRunning()) {
+            processorState.stack.push(processorState.stack.pop() * processorState.stack.pop());
+        }
+    }
+
+    void Commands::Div::execute(ProcessorState &processorState) {
+        if (processorState.isRunning()) {
+            processorState.stack.push(processorState.stack.pop() / processorState.stack.pop());
 
         }
     }
 
-    void Commands::Mul::execute(ProcessorState *processorState) {
-        if (processorState->isRunning()) {
-            processorState->stack.push(processorState->stack.pop() * processorState->stack.pop());
-
-        }
-    }
-
-    void Commands::Div::execute(ProcessorState *processorState) {
-        if (processorState->isRunning()) {
-            processorState->stack.push(processorState->stack.pop() / processorState->stack.pop());
-
-        }
-    }
-
-    void Commands::In::execute(ProcessorState *processorState) {
-        if (processorState->isRunning()) {
+    void Commands::In::execute(ProcessorState &processorState) {
+        if (processorState.isRunning()) {
             argType input;
             std::cin >> input;
-            processorState->stack.push(input);
+            processorState.stack.push(input);
         }
     }
 
-    void Commands::Out::execute(ProcessorState *processorState) {
-        if (processorState->isRunning())
-            std::cout << processorState->stack.getTop() << std::endl;
+    void Commands::Out::execute(ProcessorState &processorState) {
+        if (processorState.isRunning())
+            std::cout << processorState.stack.getTop() << std::endl;
     }
 
     struct DoubleTop {
@@ -86,71 +89,78 @@ namespace processorEmulator {
         return result;
     }
 
-    void jump(ProcessorState *processorState, const std::string &label) {
-        processorState->head = processorState->commands.cbegin() + processorState->labels[label] - 1;
+    void jump(ProcessorState &processorState, const std::string &label) {
+        processorState.head = processorState.commands.cbegin() + processorState.labels[label];
     }
 
-    void Commands::Jmp::execute(ProcessorState *processorState) {
-        if (processorState->isRunning())
+    void Commands::Jmp::execute(ProcessorState &processorState) {
+        if (processorState.isRunning())
             jump(processorState, _label);
     }
 
-    void Commands::Jeq::execute(ProcessorState *processorState) {
-        if (processorState->isRunning()) {
-            DoubleTop top = getTwoTopValues(&processorState->stack);
+    void Commands::Jeq::execute(ProcessorState &processorState) {
+        if (processorState.isRunning()) {
+            DoubleTop top = getTwoTopValues(&processorState.stack);
             if (top.lower == top.higher)
                 jump(processorState, _label);
         }
     }
 
-    void Commands::Jne::execute(ProcessorState *processorState) {
-        if (processorState->isRunning()) {
-            DoubleTop top = getTwoTopValues(&processorState->stack);
+    void Commands::Jne::execute(ProcessorState &processorState) {
+        if (processorState.isRunning()) {
+            DoubleTop top = getTwoTopValues(&processorState.stack);
             if (top.lower != top.higher)
                 jump(processorState, _label);
         }
     }
 
-    void Commands::Ja::execute(ProcessorState *processorState) {
-        if (processorState->isRunning()) {
-            DoubleTop top = getTwoTopValues(&processorState->stack);
+    void Commands::Ja::execute(ProcessorState &processorState) {
+        if (processorState.isRunning()) {
+            DoubleTop top = getTwoTopValues(&processorState.stack);
             if (top.lower < top.higher)
                 jump(processorState, _label);
         }
     }
 
-    void Commands::Jae::execute(ProcessorState *processorState) {
-        if (processorState->isRunning()) {
-            DoubleTop top = getTwoTopValues(&processorState->stack);
+    void Commands::Jae::execute(ProcessorState &processorState) {
+        if (processorState.isRunning()) {
+            DoubleTop top = getTwoTopValues(&processorState.stack);
             if (top.lower <= top.higher)
                 jump(processorState, _label);
         }
     }
 
-    void Commands::Jb::execute(ProcessorState *processorState) {
-        if (processorState->isRunning()) {
-            DoubleTop top = getTwoTopValues(&processorState->stack);
+    void Commands::Jb::execute(ProcessorState &processorState) {
+        if (processorState.isRunning()) {
+            DoubleTop top = getTwoTopValues(&processorState.stack);
             if (top.lower > top.higher)
                 jump(processorState, _label);
         }
     }
 
-    void Commands::Jbe::execute(ProcessorState *processorState) {
-        if (processorState->isRunning()) {
-            DoubleTop top = getTwoTopValues(&processorState->stack);
+    void Commands::Jbe::execute(ProcessorState &processorState) {
+        if (processorState.isRunning()) {
+            DoubleTop top = getTwoTopValues(&processorState.stack);
             if (top.lower >= top.higher)
                 jump(processorState, _label);
         }
     }
 
-    void Commands::Call::execute(ProcessorState *processorState) {
-        LabelCommand::execute(processorState);
+    void Commands::Call::execute(ProcessorState &processorState) {
+        if (processorState.isRunning()) {
+            processorState.callStack.push(std::make_pair(std::distance(processorState.commands.cbegin(), processorState.head), processorState.stack.getSize()));
+            jump(processorState, _label);
+        }
     }
 
-    void Commands::Ret::execute(ProcessorState *processorState) {
-        BaseCommand::execute(processorState);
+    void Commands::Ret::execute(ProcessorState &processorState) {
+        if (processorState.isRunning()) {
+            auto callStackItemState = processorState.callStack.pop();
+            processorState.head = processorState.commands.cbegin() + callStackItemState.first;
+            while (processorState.callStack.getSize() > callStackItemState.second)
+                processorState.stack.pop();
+        }
     }
-
 
     void checkArguments(const std::smatch &match, int numOfLine) {
         if (match.length() < 3) {

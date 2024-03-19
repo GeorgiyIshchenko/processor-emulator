@@ -22,3 +22,10 @@ TEST(Operation, Factorial){
     starter.doit();
 }
 
+TEST(Operation, RecuriveFactorial){
+    auto path = "../tests/recursive_factorial";
+    processorEmulator::Starter starter{path};
+    starter.doit();
+}
+
+

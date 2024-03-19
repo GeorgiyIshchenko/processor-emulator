@@ -1,0 +1,24 @@
+factorial:
+    push 1
+    jae return
+    pop
+    popr ax
+    pushr ax
+    push 1
+    pushr ax
+    sub
+    call factorial
+    mul
+    ret
+    return:
+        pop
+        ret
+
+#______________________________________________
+
+begin
+
+in
+call factorial
+out
+end

@@ -17,8 +17,9 @@ namespace processorEmulator {
             _processorState.stack = Stack<argType>{};
             _processorState.status = Status::NOT_STARTED;
             _processorState.commands = commands;
-            _processorState.head = commands.cbegin();
+            _processorState.head = _processorState.commands.cbegin();
             _processorState.labels = labels;
+            _processorState.callStack = {};
         };
 
         ~Processor() = default;

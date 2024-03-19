@@ -24,7 +24,7 @@ while:
     pushr ax
     pushr dx
     ja while
-pushr bx
 
+pushr bx
 out
 end
