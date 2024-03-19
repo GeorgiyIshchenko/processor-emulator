@@ -3,7 +3,8 @@ based on C++ to code on assembly-like language
 
 ## Usage
 
-'''assembly
+```assembly
+
 factorial:
     push 1
     jae return
@@ -26,4 +27,4 @@ in
 call factorial
 out
 end
-'''
+```
