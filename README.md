@@ -1,4 +1,4 @@
-# Processor Interpretator
+# Processor Emulator
 based on C++ to code on assembly-like language
 
 ## Usage
