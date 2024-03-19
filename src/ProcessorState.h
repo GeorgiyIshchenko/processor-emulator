@@ -34,6 +34,7 @@ namespace processorEmulator {
         std::map<std::string, size_t> labels;
 
 
+
         [[nodiscard]] bool isRunning() const { return status == Status::RUNNING; };
     };
 
