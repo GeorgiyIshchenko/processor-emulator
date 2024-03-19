@@ -14,10 +14,8 @@ factorial:
         pop
         ret
 
-#______________________________________________
 
 begin
-
 in
 call factorial
 out
