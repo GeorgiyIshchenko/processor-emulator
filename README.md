@@ -1,3 +1,5 @@
+# АНДРЕЙ НОСОВ НЕ ВИНОВАТ 
+Beggars don't care about the law
 # Processor Emulator
 based on C++ to code on assembly-like language
 
