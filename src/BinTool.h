@@ -22,11 +22,18 @@ namespace processorEmulator::BinTool {
         size_t label;
     };
 
+    struct DeserializerResponse {
+        std::vector<std::shared_ptr<Commands::BaseCommand>> commands = {};
+        std::map<size_t, size_t> labels = {};
+    };
+
     class Serializer {
 
     public:
 
         static void serialize(const std::string& programPath, const std::string& objectRegex = "([+-]?[1-9]*[0-9]*)");
+
+        static DeserializerResponse deserialize(const std::string& programPath);
 
     };
 
